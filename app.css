@@ -184,11 +184,11 @@ body {
 }
 
 .breathing-circle.inhale .circle-glow {
-    animation: glow-inhale var(--breath-time, 1.8s) var(--ease-in-out) forwards;
+    animation: glow-inhale var(--breath-time, 1.8s) ease-in-out forwards;
 }
 
 .breathing-circle.exhale .circle-glow {
-    animation: glow-exhale var(--breath-time, 1.8s) var(--ease-in-out) forwards;
+    animation: glow-exhale var(--breath-time, 1.8s) ease-in-out forwards;
 }
 
 .breathing-circle.hold-pulse .circle-glow {
@@ -494,8 +494,8 @@ body.dark .control-btn {
     100% { opacity: 0; transform: translate(var(--end-x), var(--end-y)) scale(1); }
 }
 
-.particle.inhale { animation: particle-inhale var(--breath-time, 1.5s) var(--ease-in-out) forwards; }
-.particle.exhale { animation: particle-exhale var(--breath-time, 1.5s) var(--ease-in-out) forwards; }
+.particle.inhale { animation: particle-inhale var(--breath-time, 1.5s) ease-in-out forwards; }
+.particle.exhale { animation: particle-exhale var(--breath-time, 1.5s) ease-in-out forwards; }
 
 .breath-wave {
     position: absolute;

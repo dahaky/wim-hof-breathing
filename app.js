@@ -230,15 +230,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setBreathingAnimation(type, duration = 1500) {
         if (!elements.breathingCircle) return;
-        elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
         if (type) {
             elements.breathingCircle.style.setProperty('--breath-time', `${duration}ms`);
+            elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
             void elements.breathingCircle.offsetWidth;
             elements.breathingCircle.classList.add(type);
             createParticles(type, duration);
             if (type === 'inhale') {
                 triggerBreathWave();
             }
+        } else {
+            elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
         }
     }
 
@@ -640,8 +642,9 @@ document.addEventListener('DOMContentLoaded', function() {
             playSound(sounds.backgroundBreathing);
         }
         
-        for (let i = 0; i < 30; i++) {
-            state.breathCount++;
+        const totalBreaths = 30;
+        for (let i = 0; i < totalBreaths; i++) {
+            state.breathCount = i + 1;
             
             state.currentPhase = 'Inhale';
             animatePhaseChange();
@@ -649,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.counter.textContent = state.breathCount;
             animateCounter();
             
-            const breathTime = i === 29 ? state.breathDuration * 2 * 1000 : state.breathDuration * 1000;
+            const breathTime = i === totalBreaths - 1 ? state.breathDuration * 2 * 1000 : state.breathDuration * 1000;
             setBreathingAnimation('inhale', breathTime);
             
             if (state.soundEnabled) {
@@ -657,7 +660,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             await animateProgress(breathTime, true, false);
-            await sleep(300); // Small pause at the end of inhale
             
             state.currentPhase = 'Exhale';
             animatePhaseChange();
@@ -669,7 +671,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 playSound(sounds.exhale);
             }
             await animateProgress(breathTime, false, false);
-            await sleep(300); // Small pause at the end of exhale
         }
 
         setBreathingAnimation(null);
