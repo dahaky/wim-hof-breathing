@@ -1,0 +1,863 @@
+const tg = window.Telegram?.WebApp;
+
+if (tg) {
+    tg.expand();
+    tg.ready();
+    tg.enableClosingConfirmation();
+    
+    if (tg.themeParams) {
+        const root = document.documentElement;
+        if (tg.themeParams.bg_color) root.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
+        if (tg.themeParams.text_color) root.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
+        if (tg.themeParams.hint_color) root.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
+        if (tg.themeParams.button_color) root.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
+        if (tg.themeParams.button_text_color) root.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+        if (tg.themeParams.secondary_bg_color) root.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color);
+    }
+    
+    if (tg.colorScheme === 'dark') {
+        document.body.classList.add('dark');
+    }
+}
+
+let wakeLock = null;
+
+async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+        } catch (err) {}
+    }
+}
+
+async function releaseWakeLock() {
+    if (wakeLock) {
+        try {
+            await wakeLock.release();
+            wakeLock = null;
+        } catch (err) {}
+    }
+}
+
+const translations = {
+    ru: {
+        title: "Дыхание Вима Хофа",
+        description: "Испытайте силу контролируемого дыхания по методу Вима Хофа",
+        sound: "Звук",
+        darkMode: "Темная тема",
+        start: "Начать",
+        settings: "Настройки",
+        nextRound: "Начало следующего раунда...",
+        getReady: "Приготовьтесь",
+        breatheIn: "Прервать задержку",
+        pause: "Пауза",
+        resume: "Продолжить",
+        complete: "Практика завершена!",
+        share: "Поделиться",
+        restart: "Повторить",
+        joinGroup: "Вступить в группу",
+        roundsCount: "Количество раундов",
+        holdTime: "Время задержки (сек)",
+        breathDuration: "Длительность вдоха",
+        save: "Сохранить",
+        roundOf: "Раунд {current} из {total}",
+        inhale: "Вдох",
+        exhale: "Выдох",
+        hold: "Задержка",
+        deepInhale: "Глубокий вдох",
+        deepExhale: "Глубокий выдох",
+        results: "Время задержки: {time} сек",
+        shareText: "Я завершил практику дыхания Вима Хофа и задержал дыхание на {time} секунд!",
+        nextRoundNum: "Раунд {num}"
+    },
+    en: {
+        title: "Wim Hof Breathing",
+        description: "Experience the power of controlled breathing through the Wim Hof Method",
+        sound: "Sound",
+        darkMode: "Dark Mode",
+        start: "Start",
+        settings: "Settings",
+        nextRound: "Starting next round...",
+        getReady: "Get Ready",
+        breatheIn: "Stop Hold",
+        pause: "Pause",
+        resume: "Resume",
+        complete: "Practice Complete!",
+        share: "Share",
+        restart: "Do Again",
+        joinGroup: "Join Group",
+        roundsCount: "Number of Rounds",
+        holdTime: "Hold Time (sec)",
+        breathDuration: "Breath Duration",
+        save: "Save",
+        roundOf: "Round {current} of {total}",
+        inhale: "Inhale",
+        exhale: "Exhale",
+        hold: "Hold",
+        deepInhale: "Deep Inhale",
+        deepExhale: "Deep Exhale",
+        results: "Hold time: {time} sec",
+        shareText: "I completed Wim Hof Breathing and held my breath for {time} seconds!",
+        nextRoundNum: "Round {num}"
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    let state = {
+        rounds: 3,
+        initialHoldTime: 30,
+        breathDuration: 2,
+        currentRound: 1,
+        breathCount: 0,
+        isBreathing: false,
+        isHolding: false,
+        shouldStopAnimation: false,
+        soundEnabled: false,
+        soundsLoaded: false,
+        currentPhase: 'Get Ready',
+        lastHoldTime: 0,
+        isPaused: false,
+        language: localStorage.getItem('lang') || 'ru'
+    };
+
+    const screens = {
+        home: document.getElementById('homeScreen'),
+        exercise: document.getElementById('exerciseScreen'),
+        completion: document.getElementById('completionScreen')
+    };
+
+    const elements = {
+        startButton: document.getElementById('startButton'),
+        settingsButton: document.getElementById('settingsButton'),
+        saveSettings: document.getElementById('saveSettings'),
+        restartButton: document.getElementById('restartButton'),
+        roundsInput: document.getElementById('rounds'),
+        holdTimeInput: document.getElementById('holdTime'),
+        breathDurationInput: document.getElementById('breathDuration'),
+        roundsValue: document.getElementById('roundsValue'),
+        holdTimeValue: document.getElementById('holdTimeValue'),
+        breathDurationValue: document.getElementById('breathDurationValue'),
+        progressRing: document.querySelector('.progress-ring__circle'),
+        phase: document.getElementById('phase'),
+        round: document.getElementById('round'),
+        counter: document.getElementById('counter'),
+        settingsModal: document.querySelector('.settings-modal'),
+        modalOverlay: document.querySelector('.modal-overlay'),
+        breatheInButton: document.getElementById('breatheInButton'),
+        pauseButton: document.getElementById('pauseButton'),
+        soundToggle: document.getElementById('soundToggle'),
+        soundToggleContainer: document.querySelector('.sound-toggle'),
+        topControls: document.querySelector('.top-controls'),
+        themeToggle: document.getElementById('themeToggle'),
+        langToggle: document.getElementById('langToggle'),
+        nextRoundMessage: document.getElementById('nextRoundMessage'),
+        results: document.getElementById('results'),
+        shareButton: document.getElementById('shareButton'),
+        breathingCircle: document.getElementById('breathingCircle'),
+        breathParticles: document.getElementById('breathParticles'),
+        pulseRing: document.querySelector('.pulse-ring'),
+        breathWave: document.querySelector('.breath-wave')
+    };
+
+    const sounds = {
+        countdown: document.getElementById('countdownSound'),
+        backgroundBreathing: document.getElementById('backgroundBreathing'),
+        backgroundHold: document.getElementById('backgroundHold'),
+        inhale: document.getElementById('inhaleSound'),
+        exhale: document.getElementById('exhaleSound')
+    };
+
+    const radius = 130;
+    const circumference = radius * 2 * Math.PI;
+    
+    if (elements.progressRing) {
+        elements.progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
+        elements.progressRing.style.strokeDashoffset = circumference;
+    }
+
+    function setProgress(percent) {
+        if (!elements.progressRing) return;
+        const offset = circumference - (percent / 100 * circumference);
+        elements.progressRing.style.strokeDashoffset = offset;
+    }
+
+    function createParticles(type, duration = 1500) {
+        if (!elements.breathParticles) return;
+        elements.breathParticles.innerHTML = '';
+        
+        const particleCount = 12;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = `particle ${type}`;
+            particle.style.setProperty('--breath-time', `${duration}ms`);
+            
+            const angle = (i / particleCount) * Math.PI * 2;
+            const distance = 120 + Math.random() * 40;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+            
+            particle.style.left = '50%';
+            particle.style.top = '50%';
+            particle.style.setProperty('--start-x', `${x}px`);
+            particle.style.setProperty('--start-y', `${y}px`);
+            particle.style.setProperty('--end-x', `${x}px`);
+            particle.style.setProperty('--end-y', `${y}px`);
+            particle.style.animationDelay = `${Math.random() * 0.3}s`;
+            
+            elements.breathParticles.appendChild(particle);
+        }
+    }
+
+    function triggerBreathWave() {
+        if (!elements.breathWave) return;
+        elements.breathWave.classList.remove('active');
+        void elements.breathWave.offsetWidth;
+        elements.breathWave.classList.add('active');
+    }
+
+    function animateCounter() {
+        if (!elements.counter) return;
+        elements.counter.classList.remove('tick');
+        void elements.counter.offsetWidth;
+        elements.counter.classList.add('tick');
+    }
+
+    function animatePhaseChange() {
+        if (!elements.phase) return;
+        elements.phase.classList.remove('changing');
+        void elements.phase.offsetWidth;
+        elements.phase.classList.add('changing');
+    }
+
+    function setBreathingAnimation(type, duration = 1500) {
+        if (!elements.breathingCircle) return;
+        elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
+        if (type) {
+            elements.breathingCircle.style.setProperty('--breath-time', `${duration}ms`);
+            void elements.breathingCircle.offsetWidth;
+            elements.breathingCircle.classList.add(type);
+            createParticles(type, duration);
+            if (type === 'inhale') {
+                triggerBreathWave();
+            }
+        }
+    }
+
+    function startHoldPulse() {
+        if (!elements.breathingCircle) return;
+        elements.breathingCircle.classList.add('hold-pulse');
+    }
+
+    function stopHoldPulse() {
+        if (!elements.breathingCircle) return;
+        elements.breathingCircle.classList.remove('hold-pulse');
+    }
+
+    function updateLanguage() {
+        const lang = state.language;
+        const t = translations[lang];
+        
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (t[key]) {
+                const btnText = el.querySelector('.btn-text');
+                if (btnText) {
+                    btnText.textContent = t[key];
+                } else if (el.tagName === 'TITLE') {
+                    document.title = t[key];
+                } else {
+                    el.textContent = t[key];
+                }
+            }
+        });
+
+        if (elements.langToggle) {
+            elements.langToggle.checked = lang === 'en';
+        }
+
+        if (screens.exercise.classList.contains('active')) {
+            updateExerciseTexts();
+        }
+        
+        if (screens.completion.classList.contains('active')) {
+            updateCompletionTexts();
+        }
+
+        localStorage.setItem('lang', lang);
+    }
+
+    function updateExerciseTexts() {
+        const t = translations[state.language];
+        elements.round.textContent = t.roundOf.replace('{current}', state.currentRound).replace('{total}', state.rounds);
+        
+        let displayPhase = t[state.currentPhase.toLowerCase().replace(' ', '')] || state.currentPhase;
+        if (state.currentPhase === 'Get Ready') displayPhase = t.getReady;
+        if (state.currentPhase === 'Deep Inhale') displayPhase = t.deepInhale;
+        if (state.currentPhase === 'Deep Exhale') displayPhase = t.deepExhale;
+        
+        elements.phase.textContent = displayPhase;
+        
+        const pauseBtnText = elements.pauseButton.querySelector('.btn-text');
+        if (pauseBtnText) {
+            pauseBtnText.textContent = state.isPaused ? t.resume : t.pause;
+        }
+    }
+
+    function updateCompletionTexts() {
+        const t = translations[state.language];
+        elements.results.textContent = t.results.replace('{time}', state.lastHoldTime);
+        const shareText = encodeURIComponent(t.shareText.replace('{time}', state.lastHoldTime));
+        elements.shareButton.href = `https://t.me/share/url?url=https://t.me/breathingapp_bot&text=${shareText}`;
+    }
+
+    const isDark = localStorage.getItem('dark') === 'true' || (tg && tg.colorScheme === 'dark');
+    document.body.classList.toggle('dark', isDark);
+    if (elements.themeToggle) elements.themeToggle.checked = isDark;
+
+    updateLanguage();
+
+    elements.startButton?.addEventListener('click', startExercise);
+    elements.settingsButton?.addEventListener('click', showSettings);
+    elements.saveSettings?.addEventListener('click', saveSettings);
+    elements.restartButton?.addEventListener('click', resetAndShowHome);
+    elements.modalOverlay?.addEventListener('click', hideSettings);
+    elements.soundToggle?.addEventListener('change', toggleSound);
+    
+    elements.langToggle?.addEventListener('change', () => {
+        state.language = elements.langToggle.checked ? 'en' : 'ru';
+        updateLanguage();
+    });
+    
+    elements.breatheInButton?.addEventListener('click', () => {
+        state.isHolding = false;
+        state.shouldStopAnimation = true;
+        stopHoldPulse();
+        hideBreatheInButton();
+        if (state.soundEnabled) {
+            sounds.backgroundHold.pause();
+            playSound(sounds.backgroundBreathing);
+        }
+        state.currentPhase = 'Deep Inhale';
+        animatePhaseChange();
+        updateExerciseTexts();
+    });
+    
+    elements.pauseButton?.addEventListener('click', togglePause);
+    
+    elements.themeToggle?.addEventListener('change', () => {
+        const checked = elements.themeToggle.checked;
+        document.body.classList.toggle('dark', checked);
+        localStorage.setItem('dark', checked);
+    });
+
+    elements.roundsInput?.addEventListener('input', () => {
+        if (elements.roundsValue) {
+            elements.roundsValue.textContent = elements.roundsInput.value;
+            elements.roundsValue.classList.remove('changed');
+            void elements.roundsValue.offsetWidth;
+            elements.roundsValue.classList.add('changed');
+        }
+    });
+
+    elements.holdTimeInput?.addEventListener('input', () => {
+        if (elements.holdTimeValue) {
+            elements.holdTimeValue.textContent = elements.holdTimeInput.value;
+            elements.holdTimeValue.classList.remove('changed');
+            void elements.holdTimeValue.offsetWidth;
+            elements.holdTimeValue.classList.add('changed');
+        }
+    });
+
+    elements.breathDurationInput?.addEventListener('input', () => {
+        if (elements.breathDurationValue) {
+            elements.breathDurationValue.textContent = elements.breathDurationInput.value;
+            elements.breathDurationValue.classList.remove('changed');
+            void elements.breathDurationValue.offsetWidth;
+            elements.breathDurationValue.classList.add('changed');
+        }
+    });
+
+    async function preloadSounds() {
+        if (state.soundsLoaded) return;
+        
+        const loadPromises = Object.values(sounds).map(sound => {
+            if (!sound) return Promise.resolve();
+            return new Promise((resolve) => {
+                sound.load();
+                sound.volume = 0;
+                sound.play().then(() => {
+                    sound.pause();
+                    sound.currentTime = 0;
+                    sound.volume = 1;
+                    resolve();
+                }).catch(() => {
+                    sound.volume = 1;
+                    resolve();
+                });
+            });
+        });
+        
+        await Promise.all(loadPromises);
+        state.soundsLoaded = true;
+    }
+
+    async function toggleSound() {
+        state.soundEnabled = elements.soundToggle.checked;
+        
+        if (state.soundEnabled) {
+            await preloadSounds();
+            playSoundForCurrentPhase();
+        } else {
+            stopAllSounds();
+        }
+    }
+
+    function playSound(sound) {
+        if (state.soundEnabled && sound) {
+            sound.currentTime = 0;
+            sound.play().catch(() => {});
+        }
+    }
+
+    function stopAllSounds() {
+        Object.values(sounds).forEach(sound => {
+            if (sound) {
+                sound.pause();
+                sound.currentTime = 0;
+            }
+        });
+    }
+
+    function playSoundForCurrentPhase() {
+        if (!state.soundEnabled) return;
+
+        switch (state.currentPhase) {
+            case 'Get Ready':
+                playSound(sounds.countdown);
+                break;
+            case 'Inhale':
+                playSound(sounds.inhale);
+                playSound(sounds.backgroundBreathing);
+                break;
+            case 'Exhale':
+                playSound(sounds.exhale);
+                playSound(sounds.backgroundBreathing);
+                break;
+            case 'Hold':
+                playSound(sounds.backgroundHold);
+                break;
+            case 'Deep Inhale':
+                playSound(sounds.inhale);
+                break;
+            case 'Deep Exhale':
+                playSound(sounds.exhale);
+                playSound(sounds.backgroundBreathing);
+                break;
+        }
+    }
+
+    function togglePause() {
+        state.isPaused = !state.isPaused;
+        elements.pauseButton?.classList.toggle('paused', state.isPaused);
+    }
+
+    function showScreen(screenId) {
+        Object.values(screens).forEach(screen => {
+            if (screen) screen.classList.remove('active');
+        });
+        if (screens[screenId]) screens[screenId].classList.add('active');
+
+        if (screenId === 'exercise') {
+            elements.soundToggleContainer?.classList.add('active');
+            elements.topControls?.classList.add('active');
+        } else {
+            elements.soundToggleContainer?.classList.remove('active');
+            elements.topControls?.classList.remove('active');
+            if (screenId === 'completion') {
+                updateCompletionTexts();
+            }
+        }
+    }
+
+    function showSettings() {
+        if (elements.roundsInput && elements.holdTimeInput && elements.breathDurationInput) {
+            elements.roundsInput.value = state.rounds;
+            elements.holdTimeInput.value = state.initialHoldTime;
+            elements.breathDurationInput.value = state.breathDuration;
+            if (elements.roundsValue) elements.roundsValue.textContent = state.rounds;
+            if (elements.holdTimeValue) elements.holdTimeValue.textContent = state.initialHoldTime;
+            if (elements.breathDurationValue) elements.breathDurationValue.textContent = state.breathDuration;
+        }
+        elements.settingsModal?.classList.add('active');
+        elements.modalOverlay?.classList.add('active');
+    }
+
+    function hideSettings() {
+        elements.settingsModal?.classList.remove('active');
+        elements.modalOverlay?.classList.remove('active');
+    }
+
+    function saveSettings() {
+        if (elements.roundsInput && elements.holdTimeInput && elements.breathDurationInput) {
+            state.rounds = parseInt(elements.roundsInput.value) || 3;
+            state.initialHoldTime = parseInt(elements.holdTimeInput.value) || 90;
+            state.breathDuration = parseFloat(elements.breathDurationInput.value) || 1.5;
+            hideSettings();
+        }
+    }
+
+    function resetAndShowHome() {
+        state.currentRound = 1;
+        state.breathCount = 0;
+        state.isBreathing = false;
+        setProgress(0);
+        stopAllSounds();
+        releaseWakeLock();
+        setBreathingAnimation(null);
+        showScreen('home');
+        state.currentPhase = 'Get Ready';
+    }
+
+    function showBreatheInButton() {
+        elements.breatheInButton?.classList.add('active');
+    }
+
+    function hideBreatheInButton() {
+        elements.breatheInButton?.classList.remove('active');
+    }
+
+    function showPauseButton() {
+        elements.topControls?.classList.add('active');
+    }
+
+    function hidePauseButton() {
+        elements.topControls?.classList.remove('active');
+        elements.pauseButton?.classList.remove('paused');
+    }
+
+    async function startExercise() {
+        await requestWakeLock();
+        stopAllSounds();
+        showScreen('exercise');
+        await startRound();
+    }
+
+    function getCurrentHoldTime() {
+        return Math.round(state.initialHoldTime * Math.pow(1.5, state.currentRound - 1));
+    }
+
+    async function countdown(seconds) {
+        state.currentPhase = 'Get Ready';
+        animatePhaseChange();
+        updateExerciseTexts();
+        elements.counter.textContent = seconds;
+        
+        if (state.soundEnabled) {
+            playSound(sounds.countdown);
+        }
+        
+        await Promise.all([
+            animateProgress(seconds * 1000, false, false),
+            updateCounterDuringHold(seconds)
+        ]);
+        
+        setProgress(0);
+        if (state.soundEnabled) {
+            sounds.countdown.pause();
+        }
+    }
+
+    async function animateProgress(duration, isIncreasing = true, pauseAtEnds = true) {
+        return new Promise(resolve => {
+            state.shouldStopAnimation = false;
+            let startTime = performance.now();
+            let pausedTime = 0;
+            let pauseStart = 0;
+            const fiveSecondsBeforeEnd = duration - 5000;
+            let hasPlayedCountdown = false;
+
+            function animate(currentTime) {
+                if (state.shouldStopAnimation) {
+                    resolve();
+                    return;
+                }
+
+                if (state.isPaused) {
+                    if (!pauseStart) pauseStart = performance.now();
+                    requestAnimationFrame(animate);
+                    return;
+                } else if (pauseStart) {
+                    pausedTime += performance.now() - pauseStart;
+                    pauseStart = 0;
+                }
+
+                const elapsed = currentTime - startTime - pausedTime;
+                let progressFraction = Math.min(elapsed / duration, 1);
+                const progress = isIncreasing
+                    ? progressFraction * 100
+                    : (1 - progressFraction) * 100;
+
+                setProgress(progress);
+
+                if (state.currentPhase === 'Hold' && elapsed >= fiveSecondsBeforeEnd && !hasPlayedCountdown) {
+                    if (state.soundEnabled) {
+                        playSound(sounds.countdown);
+                    }
+                    hasPlayedCountdown = true;
+                }
+
+                if (progressFraction < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    if (pauseAtEnds) {
+                        setTimeout(resolve, 300);
+                    } else {
+                        resolve();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        });
+    }
+
+    async function updateCounterDuringHold(duration) {
+        if (!elements.counter) return;
+        
+        let current = duration;
+        elements.counter.textContent = current;
+        animateCounter();
+        
+        while (current > 0) {
+            await sleep(1000);
+            current--;
+            elements.counter.textContent = current;
+            animateCounter();
+        }
+    }
+
+    async function startRound() {
+        elements.pulseRing?.classList.add('active');
+        await countdown(5);
+        
+        state.breathCount = 0;
+        if (state.soundEnabled) {
+            playSound(sounds.backgroundBreathing);
+        }
+        
+        for (let i = 0; i < 30; i++) {
+            state.breathCount++;
+            
+            state.currentPhase = 'Inhale';
+            animatePhaseChange();
+            updateExerciseTexts();
+            elements.counter.textContent = state.breathCount;
+            animateCounter();
+            
+            const breathTime = i === 29 ? state.breathDuration * 2 * 1000 : state.breathDuration * 1000;
+            setBreathingAnimation('inhale', breathTime);
+            
+            if (state.soundEnabled) {
+                playSound(sounds.inhale);
+            }
+            
+            await animateProgress(breathTime, true, false);
+            await sleep(300); // Small pause at the end of inhale
+            
+            state.currentPhase = 'Exhale';
+            animatePhaseChange();
+            updateExerciseTexts();
+            
+            setBreathingAnimation('exhale', breathTime);
+            
+            if (state.soundEnabled) {
+                playSound(sounds.exhale);
+            }
+            await animateProgress(breathTime, false, false);
+            await sleep(300); // Small pause at the end of exhale
+        }
+
+        setBreathingAnimation(null);
+        elements.pulseRing?.classList.remove('active');
+
+        const holdTime = getCurrentHoldTime();
+        state.currentPhase = 'Hold';
+        animatePhaseChange();
+        updateExerciseTexts();
+        
+        startHoldPulse();
+        
+        if (state.soundEnabled) {
+            sounds.backgroundBreathing.pause();
+            playSound(sounds.backgroundHold);
+        }
+
+        state.isHolding = true;
+        state.isPaused = false;
+        updateExerciseTexts();
+        
+        setTimeout(() => {
+            if (state.isHolding) showBreatheInButton();
+        }, 10000);
+
+        const holdStart = performance.now();
+        let pausedTime = 0;
+        let pauseStart = 0;
+        let hasPlayedCountdown = false;
+        let lastSecond = holdTime;
+
+        const animateHold = new Promise(resolve => {
+            const totalDuration = holdTime * 1000;
+
+            const animate = (time) => {
+                if (state.shouldStopAnimation) {
+                    resolve();
+                    return;
+                }
+
+                if (state.isPaused) {
+                    if (!pauseStart) pauseStart = performance.now();
+                    requestAnimationFrame(animate);
+                    return;
+                } else if (pauseStart) {
+                    pausedTime += performance.now() - pauseStart;
+                    pauseStart = 0;
+                }
+
+                const elapsed = time - holdStart - pausedTime;
+                const fraction = Math.min(elapsed / totalDuration, 1);
+                setProgress(fraction * 100);
+
+                const currentSecond = Math.ceil((totalDuration - elapsed) / 1000);
+                if (currentSecond !== lastSecond && currentSecond >= 0) {
+                    lastSecond = currentSecond;
+                    elements.counter.textContent = currentSecond;
+                    animateCounter();
+                }
+
+                if (elapsed >= totalDuration - 5000 && !hasPlayedCountdown) {
+                    if (state.soundEnabled) playSound(sounds.countdown);
+                    hasPlayedCountdown = true;
+                }
+
+                if (fraction < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve();
+                }
+            };
+
+            requestAnimationFrame(animate);
+        });
+
+        elements.counter.textContent = holdTime;
+
+        await animateHold;
+
+        stopHoldPulse();
+        const actualHold = Math.round((performance.now() - holdStart - pausedTime) / 1000);
+        state.lastHoldTime = actualHold;
+
+        if (state.isHolding) hideBreatheInButton();
+
+        state.isHolding = false;
+        state.shouldStopAnimation = false;
+
+        state.currentPhase = 'Deep Inhale';
+        animatePhaseChange();
+        updateExerciseTexts();
+        elements.counter.textContent = '';
+        
+        const deepInhaleTime = state.breathDuration * 2 * 1000;
+        setBreathingAnimation('inhale', deepInhaleTime);
+        
+        if (state.soundEnabled) {
+            playSound(sounds.inhale);
+            sounds.backgroundHold.pause();
+        }
+        await animateProgress(deepInhaleTime, true, false);
+        await sleep(300);
+
+        setBreathingAnimation(null);
+
+        state.currentPhase = 'Hold';
+        animatePhaseChange();
+        updateExerciseTexts();
+        elements.counter.textContent = '15';
+        
+        startHoldPulse();
+        
+        if (state.soundEnabled) {
+            sounds.backgroundBreathing.pause();
+            playSound(sounds.backgroundHold);
+        }
+        
+        await Promise.all([
+            animateProgress(15000, true, false),
+            updateCounterDuringHold(15)
+        ]);
+
+        stopHoldPulse();
+
+        state.currentPhase = 'Deep Exhale';
+        animatePhaseChange();
+        updateExerciseTexts();
+        elements.counter.textContent = '';
+        
+        const deepExhaleTime = state.breathDuration * 2 * 1000;
+        setBreathingAnimation('exhale', deepExhaleTime);
+        
+        if (state.soundEnabled) {
+            playSound(sounds.exhale);
+            sounds.backgroundHold.pause();
+            playSound(sounds.backgroundBreathing);
+        }
+        await animateProgress(deepExhaleTime, false, false);
+        await sleep(300);
+
+        setBreathingAnimation(null);
+
+        if (state.currentRound < state.rounds) {
+            const t = translations[state.language];
+            elements.nextRoundMessage.textContent = t.nextRoundNum.replace('{num}', state.currentRound + 1);
+            elements.nextRoundMessage.style.display = 'block';
+            elements.breathingCircle.classList.add('hidden');
+            await sleep(3000);
+            elements.nextRoundMessage.style.display = 'none';
+            elements.breathingCircle.classList.remove('hidden');
+            state.currentRound++;
+            await startRound();
+        } else {
+            stopAllSounds();
+            showScreen('completion');
+            state.currentPhase = 'Get Ready';
+        }
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => {
+            let remaining = ms;
+            let lastTime = performance.now();
+            
+            function check() {
+                if (state.isPaused) {
+                    lastTime = performance.now();
+                    requestAnimationFrame(check);
+                    return;
+                }
+                
+                const now = performance.now();
+                remaining -= (now - lastTime);
+                lastTime = now;
+                
+                if (remaining <= 0) {
+                    resolve();
+                } else {
+                    requestAnimationFrame(check);
+                }
+            }
+            
+            requestAnimationFrame(check);
+        });
+    }
+});
