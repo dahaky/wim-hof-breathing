@@ -49,7 +49,7 @@ const translations = {
         settings: "Настройки",
         nextRound: "Начало следующего раунда...",
         getReady: "Приготовьтесь",
-        breatheIn: "Прервать задержку",
+        breatheIn: "Сделать вдох",
         pause: "Пауза",
         resume: "Продолжить",
         complete: "Практика завершена!",
@@ -79,7 +79,7 @@ const translations = {
         settings: "Settings",
         nextRound: "Starting next round...",
         getReady: "Get Ready",
-        breatheIn: "Stop Hold",
+        breatheIn: "Take a Breath",
         pause: "Pause",
         resume: "Resume",
         complete: "Practice Complete!",
@@ -154,8 +154,8 @@ document.addEventListener('DOMContentLoaded', function() {
         shareButton: document.getElementById('shareButton'),
         breathingCircle: document.getElementById('breathingCircle'),
         breathParticles: document.getElementById('breathParticles'),
-        pulseRing: document.querySelector('.pulse-ring'),
-        breathWave: document.querySelector('.breath-wave')
+        pulseRing: null,
+        waterWave: document.querySelector('.water-wave')
     };
 
     const sounds = {
@@ -207,11 +207,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function triggerBreathWave() {
-        if (!elements.breathWave) return;
-        elements.breathWave.classList.remove('active');
-        void elements.breathWave.offsetWidth;
-        elements.breathWave.classList.add('active');
+    function triggerWaterWave(duration) {
+        if (!elements.waterWave) return;
+        elements.waterWave.classList.remove('wave-active');
+        void elements.waterWave.offsetWidth;
+        elements.waterWave.style.setProperty('--wave-duration', `${duration}ms`);
+        elements.waterWave.classList.add('wave-active');
+    }
+    
+    function stopWaterWave() {
+        if (!elements.waterWave) return;
+        elements.waterWave.classList.remove('wave-active');
     }
 
     function animateCounter() {
@@ -236,11 +242,10 @@ document.addEventListener('DOMContentLoaded', function() {
             void elements.breathingCircle.offsetWidth;
             elements.breathingCircle.classList.add(type);
             createParticles(type, duration);
-            if (type === 'inhale') {
-                triggerBreathWave();
-            }
+            triggerWaterWave(duration);
         } else {
             elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
+            stopWaterWave();
         }
     }
 
@@ -564,7 +569,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    async function animateProgress(duration, isIncreasing = true, pauseAtEnds = true) {
+    function easeInOutSine(t) {
+        return -(Math.cos(Math.PI * t) - 1) / 2;
+    }
+
+    async function animateProgress(duration, isIncreasing = true, pauseAtEnds = true, reverse = false) {
         return new Promise(resolve => {
             state.shouldStopAnimation = false;
             let startTime = performance.now();
@@ -589,10 +598,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 const elapsed = currentTime - startTime - pausedTime;
-                let progressFraction = Math.min(elapsed / duration, 1);
-                const progress = isIncreasing
-                    ? progressFraction * 100
-                    : (1 - progressFraction) * 100;
+                let linearFraction = Math.min(elapsed / duration, 1);
+                let easedFraction = easeInOutSine(linearFraction);
+                
+                let progress;
+                if (reverse) {
+                    progress = (1 - easedFraction) * 100;
+                } else {
+                    progress = isIncreasing
+                        ? easedFraction * 100
+                        : (1 - easedFraction) * 100;
+                }
 
                 setProgress(progress);
 
@@ -603,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     hasPlayedCountdown = true;
                 }
 
-                if (progressFraction < 1) {
+                if (linearFraction < 1) {
                     requestAnimationFrame(animate);
                 } else {
                     if (pauseAtEnds) {
@@ -634,7 +650,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function startRound() {
-        elements.pulseRing?.classList.add('active');
         await countdown(5);
         
         state.breathCount = 0;
@@ -674,7 +689,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         setBreathingAnimation(null);
-        elements.pulseRing?.classList.remove('active');
 
         const holdTime = getCurrentHoldTime();
         state.currentPhase = 'Hold';
@@ -771,7 +785,7 @@ document.addEventListener('DOMContentLoaded', function() {
             playSound(sounds.inhale);
             sounds.backgroundHold.pause();
         }
-        await animateProgress(deepInhaleTime, true, false);
+        await animateProgress(deepInhaleTime, true, false, true);
         await sleep(300);
 
         setBreathingAnimation(null);

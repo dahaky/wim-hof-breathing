@@ -89,7 +89,7 @@ body {
     border-radius: 50%;
     filter: blur(80px);
     opacity: 0.4;
-    animation: float 20s ease-in-out infinite;
+    animation: float 25s ease-in-out infinite;
     will-change: transform;
 }
 
@@ -108,7 +108,7 @@ body {
     background: var(--accent-end);
     bottom: -80px;
     left: -80px;
-    animation-delay: -7s;
+    animation-delay: -8s;
 }
 
 .orb-3 {
@@ -118,15 +118,58 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    animation-delay: -14s;
+    animation-delay: -16s;
     opacity: 0.2;
+}
+
+.ambient-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.ambient-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--accent-start);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particle-float 15s linear infinite;
+}
+
+.ambient-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.ambient-particle:nth-child(2) { left: 20%; animation-delay: -2s; }
+.ambient-particle:nth-child(3) { left: 30%; animation-delay: -4s; }
+.ambient-particle:nth-child(4) { left: 40%; animation-delay: -6s; }
+.ambient-particle:nth-child(5) { left: 50%; animation-delay: -8s; }
+.ambient-particle:nth-child(6) { left: 60%; animation-delay: -10s; }
+.ambient-particle:nth-child(7) { left: 70%; animation-delay: -12s; }
+.ambient-particle:nth-child(8) { left: 80%; animation-delay: -14s; }
+.ambient-particle:nth-child(9) { left: 90%; animation-delay: -1s; }
+.ambient-particle:nth-child(10) { left: 15%; animation-delay: -3s; }
+
+@keyframes particle-float {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-20vh) scale(1);
+        opacity: 0;
+    }
 }
 
 @keyframes float {
     0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(30px, -30px) scale(1.05); }
-    50% { transform: translate(-20px, 20px) scale(0.95); }
-    75% { transform: translate(20px, 10px) scale(1.02); }
+    33% { transform: translate(20px, -20px) scale(1.03); }
+    66% { transform: translate(-15px, 15px) scale(0.97); }
 }
 
 .screen {
@@ -176,10 +219,10 @@ body {
 
 .circle-glow {
     position: absolute;
-    inset: -30px;
+    inset: -40px;
     border-radius: 50%;
     background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-    opacity: 0.4;
+    opacity: 0.6;
     transition: opacity var(--breath-time, 0.8s), transform var(--breath-time, 0.8s);
 }
 
@@ -196,18 +239,18 @@ body {
 }
 
 @keyframes glow-pulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.1); }
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.15); }
 }
 
 @keyframes glow-inhale {
-    0% { opacity: 0.5; transform: scale(1); }
-    100% { opacity: 1; transform: scale(1.2); }
+    0% { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.3); }
 }
 
 @keyframes glow-exhale {
-    0% { opacity: 1; transform: scale(1.2); }
-    100% { opacity: 0.5; transform: scale(1); }
+    0% { opacity: 1; transform: scale(1.3); }
+    100% { opacity: 0.6; transform: scale(1); }
 }
 
 .home-content {
@@ -366,7 +409,7 @@ body.dark .toggles-container {
     justify-content: center;
     padding: 16px 32px;
     border: none;
-    border-radius: 14px;
+    border-radius: 50px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
@@ -497,22 +540,44 @@ body.dark .control-btn {
 .particle.inhale { animation: particle-inhale var(--breath-time, 1.5s) ease-in-out forwards; }
 .particle.exhale { animation: particle-exhale var(--breath-time, 1.5s) ease-in-out forwards; }
 
-.breath-wave {
+.water-wave {
     position: absolute;
-    inset: 0;
+    inset: -10px;
     border-radius: 50%;
-    border: 2px solid var(--accent-start);
-    opacity: 0;
     pointer-events: none;
+    opacity: 0;
+    border: 3px solid var(--accent-start);
+    box-shadow: 
+        0 0 20px var(--accent-glow),
+        inset 0 0 20px var(--accent-glow);
+    transform: scale(1);
 }
 
-.breath-wave.active {
-    animation: wave-expand 1s var(--ease-out-expo) forwards;
+.water-wave.wave-active {
+    animation: water-ripple var(--wave-duration, 2000ms) ease-out forwards;
 }
 
-@keyframes wave-expand {
-    0% { transform: scale(0.9); opacity: 0.8; }
-    100% { transform: scale(1.3); opacity: 0; }
+@keyframes water-ripple {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+        border-width: 4px;
+        box-shadow: 
+            0 0 30px var(--accent-glow),
+            inset 0 0 20px var(--accent-glow);
+    }
+    30% {
+        opacity: 0.4;
+        border-width: 2px;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+        border-width: 1px;
+        box-shadow: 
+            0 0 0px transparent,
+            inset 0 0 0px transparent;
+    }
 }
 
 .progress-ring {
@@ -537,23 +602,6 @@ body.dark .control-btn {
     stroke-dashoffset: 816.81;
     filter: drop-shadow(0 0 8px var(--accent-glow));
     transition: stroke-dashoffset 0.1s linear;
-}
-
-.pulse-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid var(--accent-start);
-    opacity: 0;
-}
-
-.pulse-ring.active {
-    animation: pulse-expand 2s ease-out infinite;
-}
-
-@keyframes pulse-expand {
-    0% { transform: scale(0.9); opacity: 0.6; }
-    100% { transform: scale(1.2); opacity: 0; }
 }
 
 .circle-content {
@@ -597,22 +645,26 @@ body.dark .control-btn {
 }
 
 .btn-small {
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: 14px 32px;
+    font-size: 16px;
     background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
     color: white;
-    box-shadow: 0 4px 15px var(--accent-glow);
+    box-shadow: 0 4px 20px var(--accent-glow);
 }
 
 .breathe-in-button {
-    transform: translateY(20px);
+    position: fixed;
+    bottom: calc(max(20px, var(--safe-area-bottom)) + 70px);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
     opacity: 0;
     visibility: hidden;
     transition: all 0.5s var(--ease-out-back);
+    z-index: 99;
 }
 
 .breathe-in-button.active {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
     opacity: 1;
     visibility: visible;
 }
@@ -682,30 +734,63 @@ body.dark .control-btn {
 .settings-modal {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--tg-theme-bg-color);
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: calc(100% - 32px);
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px 24px 0 0;
     padding: 12px 24px max(24px, var(--safe-area-bottom));
-    transform: translateY(100%);
     transition: transform 0.5s var(--ease-out-expo);
     z-index: 1000;
     max-height: 80vh;
     overflow-y: auto;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
 }
 
-.settings-modal.active { transform: translateY(0); }
+body.dark .settings-modal {
+    background: rgba(22, 27, 34, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.settings-modal.active { transform: translateX(-50%) translateY(0); }
 
 .modal-handle {
     width: 36px;
     height: 4px;
-    background: var(--tg-theme-hint-color);
-    opacity: 0.3;
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
     margin: 0 auto 20px;
 }
 
-.setting-item { margin-bottom: 24px; }
+body.dark .modal-handle {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-title {
+    color: var(--tg-theme-text-color);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.setting-item { 
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark .setting-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
 .setting-header {
     display: flex;
     justify-content: space-between;
