@@ -394,85 +394,27 @@ body.dark .toggles-container {
     color: var(--accent-start);
 }
 
-.sound-toggle {
+.bottom-controls {
     position: fixed;
-    top: max(20px, var(--safe-area-top));
-    right: 20px;
+    bottom: max(20px, var(--safe-area-bottom));
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s var(--ease-out-back);
-}
-
-.sound-toggle.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.sound-toggle .switch {
-    display: block;
-}
-
-.sound-toggle .switch input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider-pill {
-    width: 44px;
-    height: 44px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-body.dark .slider-pill {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
-}
-
-.sound-icon {
-    width: 20px;
-    height: 20px;
-    color: var(--tg-theme-text-color);
-}
-
-.sound-on { display: none; }
-input:checked + .slider-pill .sound-on { display: block; }
-input:checked + .slider-pill .sound-off { display: none; }
-input:checked + .slider-pill {
-    background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
-}
-input:checked + .slider-pill .sound-icon {
-    color: white;
-}
-
-.top-controls {
-    position: fixed;
-    top: max(20px, var(--safe-area-top));
-    left: 20px;
-    z-index: 100;
+    gap: 16px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s var(--ease-out-back);
 }
 
-.top-controls.active {
+.bottom-controls.active {
     opacity: 1;
     visibility: visible;
 }
 
-.btn-icon {
-    width: 44px;
-    height: 44px;
+.control-btn {
+    width: 48px;
+    height: 48px;
     background: rgba(255, 255, 255, 0.15);
     border-radius: 50%;
     display: flex;
@@ -486,26 +428,43 @@ input:checked + .slider-pill .sound-icon {
     transition: transform 0.2s var(--ease-out-back), background 0.2s;
 }
 
-body.dark .btn-icon {
+body.dark .control-btn {
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
 }
 
-.btn-icon:active {
+.control-btn:active {
     transform: scale(0.92);
 }
 
-.pause-icon {
-    width: 18px;
-    height: 18px;
+.control-icon {
+    width: 20px;
+    height: 20px;
     color: var(--tg-theme-text-color);
 }
 
-.btn-icon.paused {
+.control-btn.paused {
     background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
 }
 
-.btn-icon.paused .pause-icon {
+.control-btn.paused .control-icon {
+    color: white;
+}
+
+.sound-btn input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sound-btn .sound-on { display: none; }
+.sound-btn input:checked ~ .sound-on { display: block; }
+.sound-btn input:checked ~ .sound-off { display: none; }
+.sound-btn:has(input:checked) {
+    background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+}
+.sound-btn:has(input:checked) .control-icon {
     color: white;
 }
 

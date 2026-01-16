@@ -146,8 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         breatheInButton: document.getElementById('breatheInButton'),
         pauseButton: document.getElementById('pauseButton'),
         soundToggle: document.getElementById('soundToggle'),
-        soundToggleContainer: document.querySelector('.sound-toggle'),
-        topControls: document.querySelector('.top-controls'),
+        bottomControls: document.querySelector('.bottom-controls'),
         themeToggle: document.getElementById('themeToggle'),
         langToggle: document.getElementById('langToggle'),
         nextRoundMessage: document.getElementById('nextRoundMessage'),
@@ -468,11 +467,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (screens[screenId]) screens[screenId].classList.add('active');
 
         if (screenId === 'exercise') {
-            elements.soundToggleContainer?.classList.add('active');
-            elements.topControls?.classList.add('active');
+            elements.bottomControls?.classList.add('active');
         } else {
-            elements.soundToggleContainer?.classList.remove('active');
-            elements.topControls?.classList.remove('active');
+            elements.bottomControls?.classList.remove('active');
             if (screenId === 'completion') {
                 updateCompletionTexts();
             }
@@ -527,11 +524,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showPauseButton() {
-        elements.topControls?.classList.add('active');
     }
 
     function hidePauseButton() {
-        elements.topControls?.classList.remove('active');
         elements.pauseButton?.classList.remove('paused');
     }
 
