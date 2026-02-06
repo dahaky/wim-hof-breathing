@@ -1,4 +1,4 @@
-const tg = window.Telegram?.WebApp;
+vconst tg = window.Telegram?.WebApp;
 
 if (tg) {
     tg.expand();
