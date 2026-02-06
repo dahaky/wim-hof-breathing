@@ -69,6 +69,11 @@ const translations = {
         results: "Время задержки: {time} сек",
         shareText: "Я завершил практику дыхания Вима Хофа и задержал дыхание на {time} секунд!",
         nextRoundNum: "Раунд {num}",
+        exerciseSettings: "Параметры упражнения",
+        community: "Сообщество",
+        developer: "Разработчик",
+        channelDescription: "Рассказываем, как дыхание меняет химию крови, отключает стресс и включает «режим берсерка»",
+        developerDescription: "Разработчик этого приложения",
         breathingTips: [
             "Метод Вима Хоффа повышает уровень кислорода в крови и укрепляет иммунную систему",
             "Регулярная практика улучшает концентрацию и снижает уровень стресса",
@@ -109,6 +114,11 @@ const translations = {
         results: "Hold time: {time} sec",
         shareText: "I completed Wim Hof Breathing and held my breath for {time} seconds!",
         nextRoundNum: "Round {num}",
+        exerciseSettings: "Exercise Settings",
+        community: "Community",
+        developer: "Developer",
+        channelDescription: "Learn how breathing changes blood chemistry, reduces stress and activates 'berserker mode'",
+        developerDescription: "Developer of this application",
         breathingTips: [
             "The Wim Hof Method increases oxygen levels in blood and strengthens the immune system",
             "Regular practice improves concentration and reduces stress levels",
@@ -396,6 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elements.saveSettings?.addEventListener('click', saveSettings);
     elements.restartButton?.addEventListener('click', resetAndShowHome);
     elements.modalOverlay?.addEventListener('click', hideSettings);
+    document.getElementById('closeSettings')?.addEventListener('click', hideSettings);
     elements.soundToggle?.addEventListener('change', toggleSound);
     
     elements.langToggle?.addEventListener('change', () => {

@@ -150,37 +150,92 @@
 
         <div class="modal-overlay"></div>
         <div class="settings-modal">
-            <div class="modal-handle"></div>
-            <h2 class="modal-title" data-i18n="settings">Настройки</h2>
+            <button class="settings-close" id="closeSettings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
             
-            <div class="setting-item">
-                <div class="setting-header">
-                    <span data-i18n="roundsCount">Количество раундов</span>
-                    <span id="roundsValue" class="setting-value">3</span>
+            <div class="settings-content">
+                <h2 class="modal-title" data-i18n="settings">Настройки</h2>
+                
+                <div class="settings-section">
+                    <h3 class="section-title" data-i18n="exerciseSettings">Параметры упражнения</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-header">
+                            <span data-i18n="roundsCount">Количество раундов</span>
+                            <span id="roundsValue" class="setting-value">3</span>
+                        </div>
+                        <input type="range" id="rounds" min="1" max="10" value="3" class="range-slider">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-header">
+                            <span data-i18n="holdTime">Время задержки (сек)</span>
+                            <span id="holdTimeValue" class="setting-value">90</span>
+                        </div>
+                        <input type="range" id="holdTime" min="10" max="120" value="90" class="range-slider">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-header">
+                            <span data-i18n="breathDuration">Длительность вдоха</span>
+                            <span id="breathDurationValue" class="setting-value">2</span>
+                        </div>
+                        <input type="range" id="breathDuration" min="1" max="2.5" step="0.5" value="2" class="range-slider">
+                    </div>
                 </div>
-                <input type="range" id="rounds" min="1" max="10" value="3" class="range-slider">
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-header">
-                    <span data-i18n="holdTime">Время задержки (сек)</span>
-                    <span id="holdTimeValue" class="setting-value">90</span>
-                </div>
-                <input type="range" id="holdTime" min="10" max="120" value="90" class="range-slider">
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-header">
-                    <span data-i18n="breathDuration">Длительность вдоха</span>
-                    <span id="breathDurationValue" class="setting-value">2</span>
-                </div>
-                <input type="range" id="breathDuration" min="1" max="2.5" step="0.5" value="2" class="range-slider">
-            </div>
 
-            <div class="button-group">
-                <button id="saveSettings" class="btn btn-primary" data-i18n="save">
-                    <span class="btn-text">Сохранить</span>
-                </button>
+                <div class="settings-section">
+                    <h3 class="section-title" data-i18n="community">Сообщество</h3>
+                    
+                    <a href="https://t.me/icecode_wh" target="_blank" class="info-card telegram-card">
+                        <div class="info-card-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                            </svg>
+                        </div>
+                        <div class="info-card-content">
+                            <div class="info-card-title">ICE CODE | Метод Вима Хоффа</div>
+                            <div class="info-card-description" data-i18n="channelDescription">Рассказываем, как дыхание меняет химию крови, отключает стресс и включает «режим берсерка»</div>
+                        </div>
+                        <div class="info-card-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title" data-i18n="developer">Разработчик</h3>
+                    
+                    <a href="https://kwork.ru/user/nikita-belousow" target="_blank" class="info-card developer-card">
+                        <div class="info-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="info-card-content">
+                            <div class="info-card-title">Nikita Belousov</div>
+                            <div class="info-card-description" data-i18n="developerDescription">Разработчик этого приложения</div>
+                        </div>
+                        <div class="info-card-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="button-group">
+                    <button id="saveSettings" class="btn btn-primary" data-i18n="save">
+                        <span class="btn-text">Сохранить</span>
+                    </button>
+                </div>
             </div>
         </div>
 
