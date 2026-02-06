@@ -67,6 +67,13 @@
                     </p>
                 </div>
 
+                <div class="button-group">
+                    <button id="goToSettingsButton" class="btn btn-primary" data-i18n="settings">
+                        <span class="btn-text">Настройки</span>
+                        <span class="btn-shine"></span>
+                    </button>
+                </div>
+
                 <div class="info-cards-container">
                     <a href="https://t.me/icecode_wh" target="_blank" class="info-card telegram-card">
                         <div class="info-card-icon">
@@ -102,13 +109,6 @@
                         </div>
                     </a>
                 </div>
-
-                <div class="button-group">
-                    <button id="goToSettingsButton" class="btn btn-primary" data-i18n="settings">
-                        <span class="btn-text">Настройки</span>
-                        <span class="btn-shine"></span>
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -127,42 +127,45 @@
                 <p class="settings-description" data-i18n="settingsDescription">Подберите для себя оптимальные настройки</p>
                 
                 <div class="settings-list">
-                    <div class="setting-item large">
-                        <div class="setting-header">
-                            <span data-i18n="roundsCount">Количество раундов</span>
-                            <span id="roundsValue" class="setting-value">3</span>
-                        </div>
-                        <div class="slider-container large" data-slider="rounds" data-min="1" data-max="5" data-value="3">
-                            <div class="slider-track">
-                                <div class="slider-progress"></div>
+                    <div class="settings-card">
+                        <div class="setting-item large">
+                            <div class="setting-header">
+                                <span data-i18n="roundsCount">Количество раундов</span>
+                                <span id="roundsValue" class="setting-value">3</span>
                             </div>
-                            <div class="slider-thumb"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="setting-item large">
-                        <div class="setting-header">
-                            <span data-i18n="holdTime">Время задержки (сек)</span>
-                            <span id="holdTimeValue" class="setting-value">30</span>
-                        </div>
-                        <div class="slider-container large" data-slider="holdTime" data-min="10" data-max="120" data-value="30">
-                            <div class="slider-track">
-                                <div class="slider-progress"></div>
+                            <div class="slider-container large" data-slider="rounds" data-min="1" data-max="5" data-value="3">
+                                <div class="slider-track">
+                                    <div class="slider-progress"></div>
+                                </div>
+                                <div class="slider-thumb"></div>
                             </div>
-                            <div class="slider-thumb"></div>
                         </div>
-                    </div>
-                    
-                    <div class="setting-item large">
-                        <div class="setting-header">
-                            <span data-i18n="breathDuration">Длительность вдоха</span>
-                            <span id="breathDurationValue" class="setting-value">2</span>
-                        </div>
-                        <div class="slider-container large" data-slider="breathDuration" data-min="1" data-max="5" data-step="0.5" data-value="2">
-                            <div class="slider-track">
-                                <div class="slider-progress"></div>
+                        
+                        <div class="setting-item large">
+                            <div class="setting-header">
+                                <span data-i18n="holdTime">Время задержки (сек)</span>
+                                <span id="holdTimeValue" class="setting-value">30</span>
                             </div>
-                            <div class="slider-thumb"></div>
+                            <div class="slider-container large" data-slider="holdTime" data-min="10" data-max="120" data-value="30">
+                                <div class="slider-track">
+                                    <div class="slider-progress"></div>
+                                </div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <p class="setting-hint" data-i18n="holdTimeHint">Время задержки первого раунда. Последующие раунды увеличиваются в 1.5 раза</p>
+                        </div>
+                        
+                        <div class="setting-item large">
+                            <div class="setting-header">
+                                <span data-i18n="breathDuration">Длительность вдоха</span>
+                                <span id="breathDurationValue" class="setting-value">2</span>
+                            </div>
+                            <div class="slider-container large" data-slider="breathDuration" data-min="1" data-max="5" data-step="0.5" data-value="2">
+                                <div class="slider-track">
+                                    <div class="slider-progress"></div>
+                                </div>
+                                <div class="slider-thumb"></div>
+                            </div>
                         </div>
                     </div>
 
