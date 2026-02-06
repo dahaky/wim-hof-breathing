@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const sliders = document.querySelectorAll('.slider-container');
         
         sliders.forEach(sliderEl => {
-            const progress = sliderEl.querySelector('.slider-progress');
+            const fill = sliderEl.querySelector('.slider-fill');
             const thumb = sliderEl.querySelector('.slider-thumb');
             const sliderName = sliderEl.dataset.slider;
             const min = parseFloat(sliderEl.dataset.min);
@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const updateThumbAndProgress = (percent) => {
                 percent = Math.max(0, Math.min(100, percent));
                 const px = (percent / 100) * sliderRect.width;
-                progress.style.width = `${percent}%`;
+                fill.style.width = `${percent}%`;
                 thumb.style.left = `${px}px`;
             };
             
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('touchend', stopDrag);
             
             sliderEl.addEventListener('mousedown', (e) => {
-                if (e.target === sliderEl || e.target === progress) {
+                if (e.target === sliderEl || e.target === fill || e.target.classList.contains('slider-track')) {
                     isDragging = true;
                     sliderRect = sliderEl.getBoundingClientRect();
                     onMove(e.clientX);
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             sliderEl.addEventListener('touchstart', (e) => {
-                if (e.target === sliderEl || e.target === progress) {
+                if (e.target === sliderEl || e.target === fill || e.target.classList.contains('slider-track')) {
                     isDragging = true;
                     sliderRect = sliderEl.getBoundingClientRect();
                     onMove(e.touches[0].clientX);
