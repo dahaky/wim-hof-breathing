@@ -1380,35 +1380,8 @@ body.dark .setting-item:hover {
     .exercise-buttons { gap: 8px; }
     .btn { padding: 12px 24px; }
     #exerciseScreen.active { padding-top: 40px; }
-    
-    .breathing-tip {
-        top: calc(45% + var(--circle-size) / 2 + 20px);
-        font-size: 12px;
-        max-width: 280px;
-    }
 }
 
 @media (max-width: 350px) {
     :root { --circle-size: 220px; }
-    
-    .breathing-tip {
-        font-size: 12px;
-        max-width: 260px;
-        padding: 0 12px;
-    }
-}
-
-@media (min-height: 800px) {
-    .breathing-tip {
-        top: calc(45% + var(--circle-size) / 2 + 60px);
-        font-size: 16px;
-    }
-}
-
-@media (max-height: 700px) and (orientation: landscape) {
-    .breathing-tip {
-        top: calc(45% + var(--circle-size) / 2 + 15px);
-        font-size: 11px;
-        line-height: 1.4;
-    }
 }
