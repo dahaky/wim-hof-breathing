@@ -62,68 +62,9 @@
                         </div>
                     </div>
                     <h1 class="title small" data-i18n="title">Дыхание Вима Хофа</h1>
-                </div>
-
-                <div class="main-settings-container">
-                    <div class="settings-section compact">
-                        <!-- <h3 class="section-title" data-i18n="exerciseSettings">Параметры</h3> -->
-                        
-                        <div class="setting-item compact">
-                            <div class="setting-header">
-                                <span data-i18n="roundsCount">Раунды</span>
-                                <span id="roundsValue" class="setting-value">3</span>
-                            </div>
-                            <div class="slider-container" data-slider="rounds" data-min="1" data-max="10" data-value="3">
-                                <div class="slider-track">
-                                    <div class="slider-progress"></div>
-                                </div>
-                                <div class="slider-thumb"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-item compact">
-                            <div class="setting-header">
-                                <span data-i18n="holdTime">Задержка (сек)</span>
-                                <span id="holdTimeValue" class="setting-value">30</span>
-                            </div>
-                            <div class="slider-container" data-slider="holdTime" data-min="10" data-max="120" data-value="30">
-                                <div class="slider-track">
-                                    <div class="slider-progress"></div>
-                                </div>
-                                <div class="slider-thumb"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-item compact">
-                            <div class="setting-header">
-                                <span data-i18n="breathDuration">Вдох (сек)</span>
-                                <span id="breathDurationValue" class="setting-value">2</span>
-                            </div>
-                            <div class="slider-container" data-slider="breathDuration" data-min="1" data-max="2.5" data-step="0.5" data-value="2">
-                                <div class="slider-track">
-                                    <div class="slider-progress"></div>
-                                </div>
-                                <div class="slider-thumb"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="toggles-row">
-                        <div class="toggle-item compact">
-                            <span class="toggle-label" data-i18n="darkMode">Темная тема</span>
-                            <label class="toggle-switch small">
-                                <input type="checkbox" id="themeToggle">
-                                <span class="toggle-track"></span>
-                            </label>
-                        </div>
-                        <div class="toggle-item compact">
-                            <span class="toggle-label">RU / EN</span>
-                            <label class="toggle-switch small">
-                                <input type="checkbox" id="langToggle">
-                                <span class="toggle-track"></span>
-                            </label>
-                        </div>
-                    </div>
+                    <p class="description" data-i18n="description">
+                        Испытайте силу контролируемого дыхания по методу Вима Хофа
+                    </p>
                 </div>
 
                 <div class="button-group">
@@ -133,17 +74,95 @@
                     </button>
                 </div>
 
-                <div class="footer-links">
-                    <a href="https://t.me/icecode_wh" target="_blank" class="icon-link" aria-label="Telegram Channel">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                <div class="settings-accordion">
+                    <button class="accordion-header" id="settingsToggle">
+                        <span data-i18n="settings">Настройки</span>
+                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
                         </svg>
+                    </button>
+                    <div class="accordion-content" id="settingsContent">
+                        <div class="settings-section compact">
+                            <div class="setting-item compact">
+                                <div class="setting-header">
+                                    <span data-i18n="roundsCount">Раунды</span>
+                                    <span id="roundsValue" class="setting-value">3</span>
+                                </div>
+                                <div class="slider-container" data-slider="rounds" data-min="1" data-max="5" data-value="3">
+                                    <div class="slider-track">
+                                        <div class="slider-progress"></div>
+                                    </div>
+                                    <div class="slider-thumb"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item compact">
+                                <div class="setting-header">
+                                    <span data-i18n="holdTime">Задержка (сек)</span>
+                                    <span id="holdTimeValue" class="setting-value">30</span>
+                                </div>
+                                <div class="slider-container" data-slider="holdTime" data-min="10" data-max="120" data-value="30">
+                                    <div class="slider-track">
+                                        <div class="slider-progress"></div>
+                                    </div>
+                                    <div class="slider-thumb"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item compact">
+                                <div class="setting-header">
+                                    <span data-i18n="breathDuration">Вдох (сек)</span>
+                                    <span id="breathDurationValue" class="setting-value">2</span>
+                                </div>
+                                <div class="slider-container" data-slider="breathDuration" data-min="1" data-max="5" data-step="0.5" data-value="2">
+                                    <div class="slider-track">
+                                        <div class="slider-progress"></div>
+                                    </div>
+                                    <div class="slider-thumb"></div>
+                                </div>
+                            </div>
+
+                            <div class="toggles-row">
+                                <div class="toggle-item compact">
+                                    <span class="toggle-label" data-i18n="darkMode">Темная тема</span>
+                                    <label class="toggle-switch small">
+                                        <input type="checkbox" id="themeToggle">
+                                        <span class="toggle-track"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-item compact">
+                                    <span class="toggle-label">RU / EN</span>
+                                    <label class="toggle-switch small">
+                                        <input type="checkbox" id="langToggle">
+                                        <span class="toggle-track"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-links-container">
+                    <a href="https://t.me/icecode_wh" target="_blank" class="info-card telegram-card compact">
+                        <div class="info-card-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                            </svg>
+                        </div>
+                        <div class="info-card-content">
+                            <div class="info-card-title">ICE CODE</div>
+                        </div>
                     </a>
-                    <a href="https://kwork.ru/user/nikita-belousow" target="_blank" class="icon-link" aria-label="Developer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                    <a href="https://kwork.ru/user/nikita-belousow" target="_blank" class="info-card developer-card compact">
+                        <div class="info-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="info-card-content">
+                            <div class="info-card-title">Разработчик</div>
+                        </div>
                     </a>
                 </div>
             </div>

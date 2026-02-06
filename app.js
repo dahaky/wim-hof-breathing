@@ -430,12 +430,28 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('dark', checked);
     });
 
+    // Accordion logic
+    const settingsToggle = document.getElementById('settingsToggle');
+    const settingsAccordion = document.querySelector('.settings-accordion');
+    
+    if (settingsToggle && settingsAccordion) {
+        settingsToggle.addEventListener('click', () => {
+            const isOpen = settingsAccordion.classList.contains('open');
+            settingsAccordion.classList.toggle('open');
+            
+            if (!isOpen) {
+                // Re-initialize sliders when opening to ensure correct width calculation
+                setTimeout(() => initSliders(), 50);
+            }
+        });
+    }
+
     // Initialize sliders
     function initSliders() {
         const sliders = document.querySelectorAll('.slider-container');
         
         sliders.forEach(sliderEl => {
-            const fill = sliderEl.querySelector('.slider-fill');
+            const fill = sliderEl.querySelector('.slider-progress');
             const thumb = sliderEl.querySelector('.slider-thumb');
             const sliderName = sliderEl.dataset.slider;
             const min = parseFloat(sliderEl.dataset.min);
@@ -514,6 +530,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 thumb.classList.remove('active');
             };
             
+            // Initialize
+            sliderRect = sliderEl.getBoundingClientRect();
+            updateThumbAndProgress(valueToPercent(value));
+
+            if (sliderEl.dataset.initialized === 'true') return;
+
             // Events
             thumb.addEventListener('mousedown', onMouseDown);
             thumb.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -540,10 +562,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     thumb.classList.add('active');
                 }
             }, { passive: true });
-            
-            // Initialize
-            sliderRect = sliderEl.getBoundingClientRect();
-            updateThumbAndProgress(valueToPercent(value));
+
+            sliderEl.dataset.initialized = 'true';
         });
     }
     

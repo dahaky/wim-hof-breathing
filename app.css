@@ -292,14 +292,15 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
+    gap: 16px;
     height: 100%;
     width: 100%;
     max-width: 360px;
     margin: 0 auto;
     animation: fadeInUp 0.8s var(--ease-out-expo);
-    justify-content: space-between;
-    padding: 10px 0;
+    justify-content: flex-start;
+    padding: 20px 0;
+    overflow-y: auto;
 }
 
 .home-content > * {
@@ -482,8 +483,9 @@ body.dark .toggles-container {
     gap: 12px;
     width: 100%;
     max-width: 280px;
-    margin-top: auto;
+    margin-top: 0;
     align-items: stretch;
+    flex-shrink: 0;
 }
 
 .settings-modal .button-group {
@@ -953,30 +955,61 @@ body.dark .control-btn {
     margin: 0;
 }
 
-.main-settings-container {
+/* Accordion Styles */
+.settings-accordion {
     width: 100%;
+    max-width: 320px;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s var(--ease-out-back);
+    flex-shrink: 0;
+}
+
+body.dark .settings-accordion {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.accordion-header {
+    width: 100%;
+    padding: 16px;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-    justify-content: center;
-    min-height: 0; /* Важно для flex-контейнера */
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--tg-theme-text-color);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.accordion-header .chevron {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s var(--ease-out-back);
+}
+
+.settings-accordion.open .chevron {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease-out-expo);
+}
+
+.settings-accordion.open .accordion-content {
+    max-height: 400px;
 }
 
 .settings-section.compact {
-    background: var(--tg-theme-secondary-bg-color);
-    border-radius: 16px;
-    padding: 12px 16px;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+    padding: 0 16px 16px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    flex: 1;
-    max-height: 240px;
-}
-
-body.dark .settings-section.compact {
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    gap: 12px;
 }
 
 .setting-item.compact {
@@ -1000,21 +1033,20 @@ body.dark .setting-item.compact:not(:last-child) {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    flex-shrink: 0;
+    margin-top: 8px;
 }
 
 .toggle-item.compact {
     flex: 1;
-    background: var(--tg-theme-secondary-bg-color);
+    background: rgba(0, 0, 0, 0.03);
     padding: 10px;
     border-radius: 12px;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 body.dark .toggle-item.compact {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .toggle-switch.small .toggle-track {
@@ -1031,30 +1063,36 @@ body.dark .toggle-item.compact {
     transform: translateX(16px);
 }
 
-.footer-links {
+/* Compact Info Cards */
+.footer-links-container {
     display: flex;
-    gap: 24px;
-    margin-top: 8px;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
     justify-content: center;
+    margin-top: auto;
     flex-shrink: 0;
 }
 
-.icon-link {
-    color: var(--tg-theme-hint-color);
-    transition: color 0.3s;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.info-card.compact {
+    flex: 1;
+    padding: 8px 12px;
+    gap: 8px;
 }
 
-.icon-link:hover {
-    color: var(--accent-start);
+.info-card.compact .info-card-icon {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
 }
 
-.icon-link svg {
-    width: 24px;
-    height: 24px;
+.info-card.compact .info-card-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.info-card.compact .info-card-title {
+    font-size: 12px;
 }
 
 .settings-section {
