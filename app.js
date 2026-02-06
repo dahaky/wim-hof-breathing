@@ -437,13 +437,13 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('dark', checked);
     });
 
-    // Initialize glass sliders
+    // Initialize sliders
     function initSliders() {
         const sliders = document.querySelectorAll('.slider-container');
         
         sliders.forEach(sliderEl => {
             const progress = sliderEl.querySelector('.slider-progress');
-            const thumb = sliderEl.querySelector('.slider-thumb-glass');
+            const thumb = sliderEl.querySelector('.slider-thumb');
             const sliderName = sliderEl.dataset.slider;
             const min = parseFloat(sliderEl.dataset.min);
             const max = parseFloat(sliderEl.dataset.max);
