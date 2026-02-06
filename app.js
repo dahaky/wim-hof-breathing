@@ -437,33 +437,119 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('dark', checked);
     });
 
-    elements.roundsInput?.addEventListener('input', () => {
-        if (elements.roundsValue) {
-            elements.roundsValue.textContent = elements.roundsInput.value;
-            elements.roundsValue.classList.remove('changed');
-            void elements.roundsValue.offsetWidth;
-            elements.roundsValue.classList.add('changed');
-        }
-    });
-
-    elements.holdTimeInput?.addEventListener('input', () => {
-        if (elements.holdTimeValue) {
-            elements.holdTimeValue.textContent = elements.holdTimeInput.value;
-            elements.holdTimeValue.classList.remove('changed');
-            void elements.holdTimeValue.offsetWidth;
-            elements.holdTimeValue.classList.add('changed');
-        }
-    });
-
-    elements.breathDurationInput?.addEventListener('input', () => {
-        if (elements.breathDurationValue) {
-            elements.breathDurationValue.textContent = elements.breathDurationInput.value;
-            elements.breathDurationValue.classList.remove('changed');
-            void elements.breathDurationValue.offsetWidth;
-            elements.breathDurationValue.classList.add('changed');
-        }
-    });
-
+    // Initialize glass sliders
+    function initSliders() {
+        const sliders = document.querySelectorAll('.slider-container');
+        
+        sliders.forEach(sliderEl => {
+            const progress = sliderEl.querySelector('.slider-progress');
+            const thumb = sliderEl.querySelector('.slider-thumb-glass');
+            const sliderName = sliderEl.dataset.slider;
+            const min = parseFloat(sliderEl.dataset.min);
+            const max = parseFloat(sliderEl.dataset.max);
+            const step = parseFloat(sliderEl.dataset.step) || 1;
+            let value = parseFloat(sliderEl.dataset.value);
+            
+            let isDragging = false;
+            let sliderRect = sliderEl.getBoundingClientRect();
+            
+            const updateThumbAndProgress = (percent) => {
+                percent = Math.max(0, Math.min(100, percent));
+                const px = (percent / 100) * sliderRect.width;
+                progress.style.width = `${percent}%`;
+                thumb.style.left = `${px}px`;
+            };
+            
+            const getPercentFromClientX = (clientX) => {
+                const offsetX = clientX - sliderRect.left;
+                return (offsetX / sliderRect.width) * 100;
+            };
+            
+            const percentToValue = (percent) => {
+                const rawValue = min + (percent / 100) * (max - min);
+                return Math.round(rawValue / step) * step;
+            };
+            
+            const valueToPercent = (val) => {
+                return ((val - min) / (max - min)) * 100;
+            };
+            
+            const onMove = (clientX) => {
+                const percent = getPercentFromClientX(clientX);
+                value = percentToValue(percent);
+                updateThumbAndProgress(valueToPercent(value));
+                
+                // Update display value
+                const valueEl = document.getElementById(`${sliderName}Value`);
+                if (valueEl) {
+                    valueEl.textContent = value;
+                    valueEl.classList.remove('changed');
+                    void valueEl.offsetWidth;
+                    valueEl.classList.add('changed');
+                }
+                
+                // Update state
+                if (sliderName === 'rounds') state.rounds = value;
+                if (sliderName === 'holdTime') state.initialHoldTime = value;
+                if (sliderName === 'breathDuration') state.breathDuration = value;
+            };
+            
+            const onMouseDown = (e) => {
+                isDragging = true;
+                sliderRect = sliderEl.getBoundingClientRect();
+                onMove(e.clientX);
+                thumb.classList.add('active');
+            };
+            
+            const onTouchStart = (e) => {
+                isDragging = true;
+                sliderRect = sliderEl.getBoundingClientRect();
+                onMove(e.touches[0].clientX);
+                thumb.classList.add('active');
+            };
+            
+            const onMouseMove = (e) => {
+                if (isDragging) onMove(e.clientX);
+            };
+            
+            const onTouchMove = (e) => {
+                if (isDragging) onMove(e.touches[0].clientX);
+            };
+            
+            const stopDrag = () => {
+                isDragging = false;
+                thumb.classList.remove('active');
+            };
+            
+            // Events
+            thumb.addEventListener('mousedown', onMouseDown);
+            thumb.addEventListener('touchstart', onTouchStart, { passive: true });
+            
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+            document.addEventListener('touchend', stopDrag);
+            
+            sliderEl.addEventListener('mousedown', (e) => {
+                if (e.target === sliderEl || e.target === progress) {
+                    sliderRect = sliderEl.getBoundingClientRect();
+                    onMove(e.clientX);
+                }
+            });
+            
+            sliderEl.addEventListener('touchstart', (e) => {
+                if (e.target === sliderEl || e.target === progress) {
+                    sliderRect = sliderEl.getBoundingClientRect();
+                    onMove(e.touches[0].clientX);
+                }
+            }, { passive: true });
+            
+            // Initialize
+            sliderRect = sliderEl.getBoundingClientRect();
+            updateThumbAndProgress(valueToPercent(value));
+        });
+    }
+    
     async function preloadSounds() {
         if (state.soundsLoaded) return;
         
@@ -565,16 +651,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showSettings() {
-        if (elements.roundsInput && elements.holdTimeInput && elements.breathDurationInput) {
-            elements.roundsInput.value = state.rounds;
-            elements.holdTimeInput.value = state.initialHoldTime;
-            elements.breathDurationInput.value = state.breathDuration;
-            if (elements.roundsValue) elements.roundsValue.textContent = state.rounds;
-            if (elements.holdTimeValue) elements.holdTimeValue.textContent = state.initialHoldTime;
-            if (elements.breathDurationValue) elements.breathDurationValue.textContent = state.breathDuration;
-        }
+        // Update display values
+        if (elements.roundsValue) elements.roundsValue.textContent = state.rounds;
+        if (elements.holdTimeValue) elements.holdTimeValue.textContent = state.initialHoldTime;
+        if (elements.breathDurationValue) elements.breathDurationValue.textContent = state.breathDuration;
+        
+        // Update slider data attributes
+        const roundsSlider = document.querySelector('[data-slider="rounds"]');
+        const holdTimeSlider = document.querySelector('[data-slider="holdTime"]');
+        const breathDurationSlider = document.querySelector('[data-slider="breathDuration"]');
+        
+        if (roundsSlider) roundsSlider.dataset.value = state.rounds;
+        if (holdTimeSlider) holdTimeSlider.dataset.value = state.initialHoldTime;
+        if (breathDurationSlider) breathDurationSlider.dataset.value = state.breathDuration;
+        
         elements.settingsModal?.classList.add('active');
         elements.modalOverlay?.classList.add('active');
+        
+        // Initialize sliders after modal is visible
+        setTimeout(() => initSliders(), 50);
     }
 
     function hideSettings() {
