@@ -292,8 +292,14 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 24px;
+    gap: 12px;
+    height: 100%;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
     animation: fadeInUp 0.8s var(--ease-out-expo);
+    justify-content: space-between;
+    padding: 10px 0;
 }
 
 .home-content > * {
@@ -922,162 +928,133 @@ body.dark .control-btn {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
 }
 
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s var(--ease-out-expo);
-    z-index: 999;
-}
-
-.modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.settings-modal {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: auto;
-    width: 100%;
-    max-width: none;
-    max-height: 90dvh;
-    height: auto;
-    background: var(--tg-theme-bg-color);
-    border-radius: 24px 24px 0 0;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(100%);
-    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.5s;
-    z-index: 1000;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+/* Compact Home Screen Styles */
+.header-section {
     display: flex;
     flex-direction: column;
-}
-
-@media (min-width: 600px) {
-    .settings-modal {
-        top: 50%;
-        bottom: auto;
-        left: 50%;
-        right: auto;
-        width: 100%;
-        max-width: 480px;
-        max-height: 90vh;
-        border-radius: 24px;
-        transform: translate(-50%, -50%) scale(0.95);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-}
-
-body.dark .settings-modal {
-    background: var(--tg-theme-bg-color);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
-}
-
-@media (min-width: 600px) {
-    body.dark .settings-modal {
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    }
-}
-
-.settings-modal.active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-@media (min-width: 600px) {
-    .settings-modal.active {
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
-.modal-handle {
-    width: 40px;
-    height: 4px;
-    background: var(--tg-theme-hint-color);
-    opacity: 0.2;
-    border-radius: 2px;
-    margin: 12px auto 0;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
     flex-shrink: 0;
 }
 
-@media (min-width: 600px) {
-    .modal-handle {
-        display: none;
-    }
+.logo-container.small {
+    width: 60px;
+    height: 60px;
 }
 
-.settings-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s var(--ease-out-back);
-    z-index: 10;
+.logo-container.small .logo-icon {
+    width: 36px;
+    height: 36px;
+}
+
+.title.small {
+    font-size: 20px;
+    margin: 0;
+}
+
+.main-settings-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    justify-content: center;
+    min-height: 0; /* Важно для flex-контейнера */
+}
+
+.settings-section.compact {
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 16px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex: 1;
+    max-height: 240px;
+}
+
+body.dark .settings-section.compact {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.setting-item.compact {
+    padding: 4px 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.setting-item.compact:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+}
+
+body.dark .setting-item.compact:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toggles-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.toggle-item.compact {
+    flex: 1;
+    background: var(--tg-theme-secondary-bg-color);
+    padding: 10px;
+    border-radius: 12px;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+body.dark .toggle-item.compact {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.small .toggle-track {
+    width: 40px;
+    height: 24px;
+}
+
+.toggle-switch.small .toggle-track::after {
+    width: 20px;
+    height: 20px;
+}
+
+.toggle-switch.small input:checked + .toggle-track::after {
+    transform: translateX(16px);
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+    margin-top: 8px;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-link {
+    color: var(--tg-theme-hint-color);
+    transition: color 0.3s;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
 }
 
-body.dark .settings-close {
-    background: rgba(255, 255, 255, 0.1);
+.icon-link:hover {
+    color: var(--accent-start);
 }
 
-.settings-close:hover {
-    background: rgba(0, 0, 0, 0.1);
-    transform: rotate(90deg);
-}
-
-body.dark .settings-close:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.settings-close:active {
-    transform: rotate(90deg) scale(0.9);
-}
-
-.settings-close svg {
-    display: block;
-    width: 16px;
-    height: 16px;
-    color: var(--tg-theme-text-color);
-}
-
-.settings-content {
-    padding: 56px 24px 24px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    touch-action: pan-y;
-    overscroll-behavior: contain;
-    flex: 1;
-}
-
-.modal-title {
-    color: var(--tg-theme-text-color);
-    font-size: clamp(20px, 5vw, 24px);
-    font-weight: 700;
-    margin: 0;
-    text-align: center;
-    background: linear-gradient(135deg, var(--tg-theme-text-color), var(--tg-theme-hint-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.icon-link svg {
+    width: 24px;
+    height: 24px;
 }
 
 .settings-section {

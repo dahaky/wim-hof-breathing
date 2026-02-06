@@ -160,8 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const elements = {
         startButton: document.getElementById('startButton'),
-        settingsButton: document.getElementById('settingsButton'),
-        saveSettings: document.getElementById('saveSettings'),
         restartButton: document.getElementById('restartButton'),
         roundsInput: document.getElementById('rounds'),
         holdTimeInput: document.getElementById('holdTime'),
@@ -173,8 +171,6 @@ document.addEventListener('DOMContentLoaded', function() {
         phase: document.getElementById('phase'),
         round: document.getElementById('round'),
         counter: document.getElementById('counter'),
-        settingsModal: document.querySelector('.settings-modal'),
-        modalOverlay: document.querySelector('.modal-overlay'),
         breatheInButton: document.getElementById('breatheInButton'),
         pauseButton: document.getElementById('pauseButton'),
         soundToggle: document.getElementById('soundToggle'),
@@ -400,13 +396,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (elements.themeToggle) elements.themeToggle.checked = isDark;
 
     updateLanguage();
+    initSliders();
 
     elements.startButton?.addEventListener('click', startExercise);
-    elements.settingsButton?.addEventListener('click', showSettings);
-    elements.saveSettings?.addEventListener('click', saveSettings);
     elements.restartButton?.addEventListener('click', resetAndShowHome);
-    elements.modalOverlay?.addEventListener('click', hideSettings);
-    document.getElementById('closeSettings')?.addEventListener('click', hideSettings);
     elements.soundToggle?.addEventListener('change', toggleSound);
     
     elements.langToggle?.addEventListener('change', () => {
@@ -651,42 +644,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (screenId === 'completion') {
                 updateCompletionTexts();
             }
-        }
-    }
-
-    function showSettings() {
-        // Update display values
-        if (elements.roundsValue) elements.roundsValue.textContent = state.rounds;
-        if (elements.holdTimeValue) elements.holdTimeValue.textContent = state.initialHoldTime;
-        if (elements.breathDurationValue) elements.breathDurationValue.textContent = state.breathDuration;
-        
-        // Update slider data attributes
-        const roundsSlider = document.querySelector('[data-slider="rounds"]');
-        const holdTimeSlider = document.querySelector('[data-slider="holdTime"]');
-        const breathDurationSlider = document.querySelector('[data-slider="breathDuration"]');
-        
-        if (roundsSlider) roundsSlider.dataset.value = state.rounds;
-        if (holdTimeSlider) holdTimeSlider.dataset.value = state.initialHoldTime;
-        if (breathDurationSlider) breathDurationSlider.dataset.value = state.breathDuration;
-        
-        elements.settingsModal?.classList.add('active');
-        elements.modalOverlay?.classList.add('active');
-        
-        // Initialize sliders after modal is visible
-        setTimeout(() => initSliders(), 50);
-    }
-
-    function hideSettings() {
-        elements.settingsModal?.classList.remove('active');
-        elements.modalOverlay?.classList.remove('active');
-    }
-
-    function saveSettings() {
-        if (elements.roundsInput && elements.holdTimeInput && elements.breathDurationInput) {
-            state.rounds = parseInt(elements.roundsInput.value) || 3;
-            state.initialHoldTime = parseInt(elements.holdTimeInput.value) || 90;
-            state.breathDuration = parseFloat(elements.breathDurationInput.value) || 1.5;
-            hideSettings();
         }
     }
 

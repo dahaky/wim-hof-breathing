@@ -51,35 +51,78 @@
 
         <div id="homeScreen" class="screen active">
             <div class="home-content">
-                <div class="logo-container">
-                    <div class="logo-ring"></div>
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 100 100" fill="none">
-                            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" opacity="0.3"/>
-                            <path d="M50 20 C30 35, 30 65, 50 80 C70 65, 70 35, 50 20" fill="currentColor" opacity="0.6"/>
-                        </svg>
+                <div class="header-section">
+                    <div class="logo-container small">
+                        <div class="logo-ring"></div>
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 100 100" fill="none">
+                                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                                <path d="M50 20 C30 35, 30 65, 50 80 C70 65, 70 35, 50 20" fill="currentColor" opacity="0.6"/>
+                            </svg>
+                        </div>
                     </div>
+                    <h1 class="title small" data-i18n="title">Дыхание Вима Хофа</h1>
                 </div>
-                
-                <h1 class="title" data-i18n="title">Дыхание Вима Хофа</h1>
-                <p class="description" data-i18n="description">
-                    Испытайте силу контролируемого дыхания по методу Вима Хофа
-                </p>
 
-                <div class="toggles-container">
-                    <div class="toggle-item">
-                        <span class="toggle-label" data-i18n="darkMode">Темная тема</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="themeToggle">
-                            <span class="toggle-track"></span>
-                        </label>
+                <div class="main-settings-container">
+                    <div class="settings-section compact">
+                        <!-- <h3 class="section-title" data-i18n="exerciseSettings">Параметры</h3> -->
+                        
+                        <div class="setting-item compact">
+                            <div class="setting-header">
+                                <span data-i18n="roundsCount">Раунды</span>
+                                <span id="roundsValue" class="setting-value">3</span>
+                            </div>
+                            <div class="slider-container" data-slider="rounds" data-min="1" data-max="10" data-value="3">
+                                <div class="slider-track">
+                                    <div class="slider-progress"></div>
+                                </div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item compact">
+                            <div class="setting-header">
+                                <span data-i18n="holdTime">Задержка (сек)</span>
+                                <span id="holdTimeValue" class="setting-value">30</span>
+                            </div>
+                            <div class="slider-container" data-slider="holdTime" data-min="10" data-max="120" data-value="30">
+                                <div class="slider-track">
+                                    <div class="slider-progress"></div>
+                                </div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item compact">
+                            <div class="setting-header">
+                                <span data-i18n="breathDuration">Вдох (сек)</span>
+                                <span id="breathDurationValue" class="setting-value">2</span>
+                            </div>
+                            <div class="slider-container" data-slider="breathDuration" data-min="1" data-max="2.5" data-step="0.5" data-value="2">
+                                <div class="slider-track">
+                                    <div class="slider-progress"></div>
+                                </div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="toggle-item">
-                        <span class="toggle-label">RU / EN</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="langToggle">
-                            <span class="toggle-track"></span>
-                        </label>
+
+                    <div class="toggles-row">
+                        <div class="toggle-item compact">
+                            <span class="toggle-label" data-i18n="darkMode">Темная тема</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-item compact">
+                            <span class="toggle-label">RU / EN</span>
+                            <label class="toggle-switch small">
+                                <input type="checkbox" id="langToggle">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -88,7 +131,20 @@
                         <span class="btn-text">Начать</span>
                         <span class="btn-shine"></span>
                     </button>
-                    <button id="settingsButton" class="btn btn-ghost" data-i18n="settings">Настройки</button>
+                </div>
+
+                <div class="footer-links">
+                    <a href="https://t.me/icecode_wh" target="_blank" class="icon-link" aria-label="Telegram Channel">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                        </svg>
+                    </a>
+                    <a href="https://kwork.ru/user/nikita-belousow" target="_blank" class="icon-link" aria-label="Developer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
@@ -148,112 +204,6 @@
             </div>
         </div>
 
-        <div class="modal-overlay"></div>
-        <div class="settings-modal">
-            <div class="modal-handle"></div>
-            <button class="settings-close" id="closeSettings">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-            
-            <div class="settings-content">
-                <h2 class="modal-title" data-i18n="settings">Настройки</h2>
-                
-                <div class="settings-section">
-                    <h3 class="section-title" data-i18n="exerciseSettings">Параметры упражнения</h3>
-                    
-                    <div class="setting-item">
-                        <div class="setting-header">
-                            <span data-i18n="roundsCount">Количество раундов</span>
-                            <span id="roundsValue" class="setting-value">3</span>
-                        </div>
-                        <div class="slider-container" data-slider="rounds" data-min="1" data-max="10" data-value="3">
-                            <div class="slider-track">
-                                <div class="slider-progress"></div>
-                            </div>
-                            <div class="slider-thumb"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="setting-item">
-                        <div class="setting-header">
-                            <span data-i18n="holdTime">Время задержки (сек)</span>
-                            <span id="holdTimeValue" class="setting-value">30</span>
-                        </div>
-                        <div class="slider-container" data-slider="holdTime" data-min="10" data-max="120" data-value="30">
-                            <div class="slider-track">
-                                <div class="slider-progress"></div>
-                            </div>
-                            <div class="slider-thumb"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="setting-item">
-                        <div class="setting-header">
-                            <span data-i18n="breathDuration">Длительность вдоха</span>
-                            <span id="breathDurationValue" class="setting-value">2</span>
-                        </div>
-                        <div class="slider-container" data-slider="breathDuration" data-min="1" data-max="2.5" data-step="0.5" data-value="2">
-                            <div class="slider-track">
-                                <div class="slider-progress"></div>
-                            </div>
-                            <div class="slider-thumb"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h3 class="section-title" data-i18n="community">Сообщество</h3>
-                    
-                    <a href="https://t.me/icecode_wh" target="_blank" class="info-card telegram-card">
-                        <div class="info-card-icon">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-                            </svg>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="info-card-title">ICE CODE | Метод Вима Хоффа</div>
-                            <div class="info-card-description" data-i18n="channelDescription">Рассказываем, как дыхание меняет химию крови, отключает стресс и включает «режим берсерка»</div>
-                        </div>
-                        <div class="info-card-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 18l6-6-6-6"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="settings-section">
-                    <h3 class="section-title" data-i18n="developer">Разработчик</h3>
-                    
-                    <a href="https://kwork.ru/user/nikita-belousow" target="_blank" class="info-card developer-card">
-                        <div class="info-card-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="info-card-title">Nikita Belousov</div>
-                            <div class="info-card-description" data-i18n="developerDescription">Разработчик этого приложения</div>
-                        </div>
-                        <div class="info-card-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 18l6-6-6-6"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="button-group">
-                    <button id="saveSettings" class="btn btn-primary" data-i18n="save">
-                        <span class="btn-text">Сохранить</span>
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <audio id="countdownSound" src="sounds/countdown.MP3" preload="none"></audio>
         <audio id="backgroundBreathing" src="sounds/background_breathing.MP3" loop preload="none"></audio>
