@@ -1,6 +1,7 @@
 # Wim Hof Breathing App
 
 Web-приложение для дыхательной практики по методу Вима Хофа.
+Запускайте в Mini App через Telegram бота @breathingapp_bot
 
 ## Особенности
 
