@@ -843,6 +843,60 @@ body.dark .control-btn {
     visibility: visible;
 }
 
+.breathing-tip {
+    position: absolute;
+    top: calc(45% + var(--circle-size) / 2 + 40px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+    font-size: clamp(13px, 3.5vw, 15px);
+    line-height: 1.6;
+    color: var(--tg-theme-hint-color);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+    z-index: 5;
+    padding: 0 16px;
+}
+
+.breathing-tip.active {
+    opacity: 1;
+    visibility: visible;
+    animation: tip-fade-in 0.8s var(--ease-out-back);
+}
+
+@keyframes tip-fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.breathing-tip.changing {
+    animation: tip-change 0.6s var(--ease-out-expo);
+}
+
+@keyframes tip-change {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 .next-round-message {
     position: absolute;
     top: 50%;
@@ -1326,8 +1380,35 @@ body.dark .setting-item:hover {
     .exercise-buttons { gap: 8px; }
     .btn { padding: 12px 24px; }
     #exerciseScreen.active { padding-top: 40px; }
+    
+    .breathing-tip {
+        top: calc(45% + var(--circle-size) / 2 + 20px);
+        font-size: 12px;
+        max-width: 280px;
+    }
 }
 
 @media (max-width: 350px) {
     :root { --circle-size: 220px; }
+    
+    .breathing-tip {
+        font-size: 12px;
+        max-width: 260px;
+        padding: 0 12px;
+    }
+}
+
+@media (min-height: 800px) {
+    .breathing-tip {
+        top: calc(45% + var(--circle-size) / 2 + 60px);
+        font-size: 16px;
+    }
+}
+
+@media (max-height: 700px) and (orientation: landscape) {
+    .breathing-tip {
+        top: calc(45% + var(--circle-size) / 2 + 15px);
+        font-size: 11px;
+        line-height: 1.4;
+    }
 }

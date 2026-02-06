@@ -68,7 +68,17 @@ const translations = {
         deepExhale: "Глубокий выдох",
         results: "Время задержки: {time} сек",
         shareText: "Я завершил практику дыхания Вима Хофа и задержал дыхание на {time} секунд!",
-        nextRoundNum: "Раунд {num}"
+        nextRoundNum: "Раунд {num}",
+        breathingTips: [
+            "Метод Вима Хоффа повышает уровень кислорода в крови и укрепляет иммунную систему",
+            "Регулярная практика улучшает концентрацию и снижает уровень стресса",
+            "Задержка дыхания активирует парасимпатическую нервную систему",
+            "Эта техника помогает контролировать реакцию организма на стресс",
+            "Практика увеличивает выработку адреналина и снижает воспалительные процессы",
+            "Метод Вима Хоффа улучшает качество сна и повышает энергию",
+            "Глубокое дыхание насыщает клетки кислородом и выводит токсины",
+            "Регулярные тренировки повышают устойчивость к холоду и болезням"
+        ]
     },
     en: {
         title: "Wim Hof Breathing",
@@ -98,7 +108,17 @@ const translations = {
         deepExhale: "Deep Exhale",
         results: "Hold time: {time} sec",
         shareText: "I completed Wim Hof Breathing and held my breath for {time} seconds!",
-        nextRoundNum: "Round {num}"
+        nextRoundNum: "Round {num}",
+        breathingTips: [
+            "The Wim Hof Method increases oxygen levels in blood and strengthens the immune system",
+            "Regular practice improves concentration and reduces stress levels",
+            "Breath retention activates the parasympathetic nervous system",
+            "This technique helps control the body's stress response",
+            "Practice increases adrenaline production and reduces inflammation",
+            "The Wim Hof Method improves sleep quality and boosts energy",
+            "Deep breathing oxygenates cells and removes toxins",
+            "Regular training increases resistance to cold and illness"
+        ]
     }
 };
 
@@ -117,7 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPhase: 'Get Ready',
         lastHoldTime: 0,
         isPaused: false,
-        language: localStorage.getItem('lang') || 'ru'
+        language: localStorage.getItem('lang') || 'ru',
+        currentTipIndex: 0,
+        tipInterval: null
     };
 
     const screens = {
@@ -155,7 +177,8 @@ document.addEventListener('DOMContentLoaded', function() {
         breathingCircle: document.getElementById('breathingCircle'),
         breathParticles: document.getElementById('breathParticles'),
         pulseRing: null,
-        waterWave: document.querySelector('.water-wave')
+        waterWave: document.querySelector('.water-wave'),
+        breathingTip: document.getElementById('breathingTip')
     };
 
     const sounds = {
@@ -259,6 +282,52 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.breathingCircle.classList.remove('hold-pulse');
     }
 
+    function showBreathingTip() {
+        if (!elements.breathingTip) return;
+        const tips = translations[state.language].breathingTips;
+        if (!tips || tips.length === 0) return;
+        
+        elements.breathingTip.textContent = tips[state.currentTipIndex];
+        elements.breathingTip.classList.add('active');
+    }
+
+    function hideBreathingTip() {
+        if (!elements.breathingTip) return;
+        elements.breathingTip.classList.remove('active');
+    }
+
+    function updateBreathingTip() {
+        if (!elements.breathingTip) return;
+        const tips = translations[state.language].breathingTips;
+        if (!tips || tips.length === 0) return;
+        
+        elements.breathingTip.classList.add('changing');
+        
+        setTimeout(() => {
+            state.currentTipIndex = (state.currentTipIndex + 1) % tips.length;
+            elements.breathingTip.textContent = tips[state.currentTipIndex];
+            elements.breathingTip.classList.remove('changing');
+        }, 300);
+    }
+
+    function startTipRotation(intervalSeconds = 8) {
+        stopTipRotation();
+        showBreathingTip();
+        state.tipInterval = setInterval(() => {
+            if (!state.isPaused && state.isHolding) {
+                updateBreathingTip();
+            }
+        }, intervalSeconds * 1000);
+    }
+
+    function stopTipRotation() {
+        if (state.tipInterval) {
+            clearInterval(state.tipInterval);
+            state.tipInterval = null;
+        }
+        hideBreathingTip();
+    }
+
     function updateLanguage() {
         const lang = state.language;
         const t = translations[lang];
@@ -338,6 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.isHolding = false;
         state.shouldStopAnimation = true;
         stopHoldPulse();
+        stopTipRotation();
         hideBreatheInButton();
         if (state.soundEnabled) {
             sounds.backgroundHold.pause();
@@ -516,6 +586,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state.isBreathing = false;
         setProgress(0);
         stopAllSounds();
+        stopTipRotation();
         releaseWakeLock();
         setBreathingAnimation(null);
         showScreen('home');
@@ -706,6 +777,8 @@ document.addEventListener('DOMContentLoaded', function() {
         state.isPaused = false;
         updateExerciseTexts();
         
+        startTipRotation(8);
+        
         setTimeout(() => {
             if (state.isHolding) showBreatheInButton();
         }, 10000);
@@ -765,6 +838,7 @@ document.addEventListener('DOMContentLoaded', function() {
         await animateHold;
 
         stopHoldPulse();
+        stopTipRotation();
         const actualHold = Math.round((performance.now() - holdStart - pausedTime) / 1000);
         state.lastHoldTime = actualHold;
 
