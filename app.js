@@ -532,15 +532,19 @@ document.addEventListener('DOMContentLoaded', function() {
             
             sliderEl.addEventListener('mousedown', (e) => {
                 if (e.target === sliderEl || e.target === progress) {
+                    isDragging = true;
                     sliderRect = sliderEl.getBoundingClientRect();
                     onMove(e.clientX);
+                    thumb.classList.add('active');
                 }
             });
             
             sliderEl.addEventListener('touchstart', (e) => {
                 if (e.target === sliderEl || e.target === progress) {
+                    isDragging = true;
                     sliderRect = sliderEl.getBoundingClientRect();
                     onMove(e.touches[0].clientX);
+                    thumb.classList.add('active');
                 }
             }, { passive: true });
             
