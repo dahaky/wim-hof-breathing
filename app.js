@@ -42,7 +42,7 @@ async function releaseWakeLock() {
 const translations = {
     ru: {
         title: "Дыхание Вима Хофа",
-        description: "Испытайте силу контролируемого дыхания по методу Вима Хофа",
+        description: "Дыхательная практика для укрепления иммунитета, снижения стресса и повышения энергии",
         sound: "Звук",
         darkMode: "Темная тема",
         start: "Начать",
@@ -89,7 +89,7 @@ const translations = {
     },
     en: {
         title: "Wim Hof Breathing",
-        description: "Experience the power of controlled breathing through the Wim Hof Method",
+        description: "Breathing practice to boost immunity, reduce stress and increase energy",
         sound: "Sound",
         darkMode: "Dark Mode",
         start: "Start",
