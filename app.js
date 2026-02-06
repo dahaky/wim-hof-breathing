@@ -154,12 +154,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const screens = {
         home: document.getElementById('homeScreen'),
+        settings: document.getElementById('settingsScreen'),
         exercise: document.getElementById('exerciseScreen'),
         completion: document.getElementById('completionScreen')
     };
 
     const elements = {
         startButton: document.getElementById('startButton'),
+        goToSettingsButton: document.getElementById('goToSettingsButton'),
+        backButton: document.getElementById('backButton'),
         restartButton: document.getElementById('restartButton'),
         roundsInput: document.getElementById('rounds'),
         holdTimeInput: document.getElementById('holdTime'),
@@ -399,6 +402,16 @@ document.addEventListener('DOMContentLoaded', function() {
     initSliders();
 
     elements.startButton?.addEventListener('click', startExercise);
+    
+    elements.goToSettingsButton?.addEventListener('click', () => {
+        showScreen('settings');
+        setTimeout(() => initSliders(), 50);
+    });
+
+    elements.backButton?.addEventListener('click', () => {
+        showScreen('home');
+    });
+
     elements.restartButton?.addEventListener('click', resetAndShowHome);
     elements.soundToggle?.addEventListener('change', toggleSound);
     
@@ -429,22 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.toggle('dark', checked);
         localStorage.setItem('dark', checked);
     });
-
-    // Accordion logic
-    const settingsToggle = document.getElementById('settingsToggle');
-    const settingsAccordion = document.querySelector('.settings-accordion');
-    
-    if (settingsToggle && settingsAccordion) {
-        settingsToggle.addEventListener('click', () => {
-            const isOpen = settingsAccordion.classList.contains('open');
-            settingsAccordion.classList.toggle('open');
-            
-            if (!isOpen) {
-                // Re-initialize sliders when opening to ensure correct width calculation
-                setTimeout(() => initSliders(), 50);
-            }
-        });
-    }
 
     // Initialize sliders
     function initSliders() {
