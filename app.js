@@ -409,6 +409,43 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('closeSettings')?.addEventListener('click', hideSettings);
     elements.soundToggle?.addEventListener('change', toggleSound);
     
+    // Swipe down to close settings
+    let touchStartY = 0;
+    let touchEndY = 0;
+    let isDragging = false;
+    
+    elements.settingsModal?.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        isDragging = true;
+    }, { passive: true });
+    
+    elements.settingsModal?.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        touchEndY = e.touches[0].clientY;
+        const diff = touchEndY - touchStartY;
+        
+        if (diff > 0 && e.target.closest('.settings-content')?.scrollTop === 0) {
+            e.preventDefault();
+            elements.settingsModal.style.transform = `translateY(${diff}px)`;
+        }
+    }, { passive: false });
+    
+    elements.settingsModal?.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        const diff = touchEndY - touchStartY;
+        
+        if (diff > 100) {
+            hideSettings();
+        } else {
+            elements.settingsModal.style.transform = '';
+        }
+        
+        touchStartY = 0;
+        touchEndY = 0;
+    }, { passive: true });
+    
     elements.langToggle?.addEventListener('change', () => {
         state.language = elements.langToggle.checked ? 'en' : 'ru';
         updateLanguage();
@@ -580,6 +617,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideSettings() {
         elements.settingsModal?.classList.remove('active');
         elements.modalOverlay?.classList.remove('active');
+        if (elements.settingsModal) {
+            elements.settingsModal.style.transform = '';
+        }
     }
 
     function saveSettings() {
