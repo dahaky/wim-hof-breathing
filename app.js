@@ -42,12 +42,11 @@ async function releaseWakeLock() {
 const translations = {
     ru: {
         title: "Дыхание Вима Хофа",
-        description: "Дыхательная практика для укрепления иммунитета, снижения стресса и повышения энергии",
+        description: "Испытайте силу контролируемого дыхания по методу Вима Хофа",
         sound: "Звук",
         darkMode: "Темная тема",
         start: "Начать",
         settings: "Настройки",
-        settingsDescription: "Подберите для себя оптимальные настройки",
         nextRound: "Начало следующего раунда...",
         getReady: "Приготовьтесь",
         breatheIn: "Сделать вдох",
@@ -59,7 +58,6 @@ const translations = {
         joinGroup: "Вступить в группу",
         roundsCount: "Количество раундов",
         holdTime: "Время задержки (сек)",
-        holdTimeHint: "Время задержки первого раунда. Последующие раунды увеличиваются в 1.5 раза",
         breathDuration: "Длительность вдоха",
         save: "Сохранить",
         roundOf: "Раунд {current} из {total}",
@@ -71,11 +69,6 @@ const translations = {
         results: "Время задержки: {time} сек",
         shareText: "Я завершил практику дыхания Вима Хофа и задержал дыхание на {time} секунд!",
         nextRoundNum: "Раунд {num}",
-        exerciseSettings: "Параметры упражнения",
-        community: "Сообщество",
-        developer: "Разработчик",
-        channelDescription: "Рассказываем, как дыхание меняет химию крови, отключает стресс и включает «режим берсерка»",
-        developerDescription: "Разработчик этого приложения",
         breathingTips: [
             "Метод Вима Хоффа повышает уровень кислорода в крови и укрепляет иммунную систему",
             "Регулярная практика улучшает концентрацию и снижает уровень стресса",
@@ -89,12 +82,11 @@ const translations = {
     },
     en: {
         title: "Wim Hof Breathing",
-        description: "Breathing practice to boost immunity, reduce stress and increase energy",
+        description: "Experience the power of controlled breathing through the Wim Hof Method",
         sound: "Sound",
         darkMode: "Dark Mode",
         start: "Start",
         settings: "Settings",
-        settingsDescription: "Choose optimal settings for yourself",
         nextRound: "Starting next round...",
         getReady: "Get Ready",
         breatheIn: "Take a Breath",
@@ -106,7 +98,6 @@ const translations = {
         joinGroup: "Join Group",
         roundsCount: "Number of Rounds",
         holdTime: "Hold Time (sec)",
-        holdTimeHint: "Hold time for the first round. Subsequent rounds increase by 1.5x",
         breathDuration: "Breath Duration",
         save: "Save",
         roundOf: "Round {current} of {total}",
@@ -118,11 +109,6 @@ const translations = {
         results: "Hold time: {time} sec",
         shareText: "I completed Wim Hof Breathing and held my breath for {time} seconds!",
         nextRoundNum: "Round {num}",
-        exerciseSettings: "Exercise Settings",
-        community: "Community",
-        developer: "Developer",
-        channelDescription: "Learn how breathing changes blood chemistry, reduces stress and activates 'berserker mode'",
-        developerDescription: "Developer of this application",
         breathingTips: [
             "The Wim Hof Method increases oxygen levels in blood and strengthens the immune system",
             "Regular practice improves concentration and reduces stress levels",
@@ -158,15 +144,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const screens = {
         home: document.getElementById('homeScreen'),
-        settings: document.getElementById('settingsScreen'),
         exercise: document.getElementById('exerciseScreen'),
         completion: document.getElementById('completionScreen')
     };
 
     const elements = {
         startButton: document.getElementById('startButton'),
-        goToSettingsButton: document.getElementById('goToSettingsButton'),
-        backButton: document.getElementById('backButton'),
+        settingsButton: document.getElementById('settingsButton'),
+        saveSettings: document.getElementById('saveSettings'),
         restartButton: document.getElementById('restartButton'),
         roundsInput: document.getElementById('rounds'),
         holdTimeInput: document.getElementById('holdTime'),
@@ -178,6 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
         phase: document.getElementById('phase'),
         round: document.getElementById('round'),
         counter: document.getElementById('counter'),
+        settingsModal: document.querySelector('.settings-modal'),
+        modalOverlay: document.querySelector('.modal-overlay'),
         breatheInButton: document.getElementById('breatheInButton'),
         pauseButton: document.getElementById('pauseButton'),
         soundToggle: document.getElementById('soundToggle'),
@@ -403,20 +390,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (elements.themeToggle) elements.themeToggle.checked = isDark;
 
     updateLanguage();
-    initSliders();
 
     elements.startButton?.addEventListener('click', startExercise);
-    
-    elements.goToSettingsButton?.addEventListener('click', () => {
-        showScreen('settings');
-        setTimeout(() => initSliders(), 50);
-    });
-
-    elements.backButton?.addEventListener('click', () => {
-        showScreen('home');
-    });
-
+    elements.settingsButton?.addEventListener('click', showSettings);
+    elements.saveSettings?.addEventListener('click', saveSettings);
     elements.restartButton?.addEventListener('click', resetAndShowHome);
+    elements.modalOverlay?.addEventListener('click', hideSettings);
     elements.soundToggle?.addEventListener('change', toggleSound);
     
     elements.langToggle?.addEventListener('change', () => {
@@ -447,127 +426,33 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('dark', checked);
     });
 
-    // Initialize sliders
-    function initSliders() {
-        const sliders = document.querySelectorAll('.slider-container');
-        
-        sliders.forEach(sliderEl => {
-            const fill = sliderEl.querySelector('.slider-progress');
-            const thumb = sliderEl.querySelector('.slider-thumb');
-            const sliderName = sliderEl.dataset.slider;
-            const min = parseFloat(sliderEl.dataset.min);
-            const max = parseFloat(sliderEl.dataset.max);
-            const step = parseFloat(sliderEl.dataset.step) || 1;
-            let value = parseFloat(sliderEl.dataset.value);
-            
-            let isDragging = false;
-            let sliderRect = sliderEl.getBoundingClientRect();
-            
-            const updateThumbAndProgress = (percent) => {
-                percent = Math.max(0, Math.min(100, percent));
-                const px = (percent / 100) * sliderRect.width;
-                fill.style.width = `${percent}%`;
-                thumb.style.left = `${px}px`;
-            };
-            
-            const getPercentFromClientX = (clientX) => {
-                const offsetX = clientX - sliderRect.left;
-                return (offsetX / sliderRect.width) * 100;
-            };
-            
-            const percentToValue = (percent) => {
-                const rawValue = min + (percent / 100) * (max - min);
-                return Math.round(rawValue / step) * step;
-            };
-            
-            const valueToPercent = (val) => {
-                return ((val - min) / (max - min)) * 100;
-            };
-            
-            const onMove = (clientX) => {
-                const percent = getPercentFromClientX(clientX);
-                value = percentToValue(percent);
-                updateThumbAndProgress(valueToPercent(value));
-                
-                // Update display value
-                const valueEl = document.getElementById(`${sliderName}Value`);
-                if (valueEl) {
-                    valueEl.textContent = value;
-                    valueEl.classList.remove('changed');
-                    void valueEl.offsetWidth;
-                    valueEl.classList.add('changed');
-                }
-                
-                // Update state
-                if (sliderName === 'rounds') state.rounds = value;
-                if (sliderName === 'holdTime') state.initialHoldTime = value;
-                if (sliderName === 'breathDuration') state.breathDuration = value;
-            };
-            
-            const onMouseDown = (e) => {
-                isDragging = true;
-                sliderRect = sliderEl.getBoundingClientRect();
-                onMove(e.clientX);
-                thumb.classList.add('active');
-            };
-            
-            const onTouchStart = (e) => {
-                isDragging = true;
-                sliderRect = sliderEl.getBoundingClientRect();
-                onMove(e.touches[0].clientX);
-                thumb.classList.add('active');
-            };
-            
-            const onMouseMove = (e) => {
-                if (isDragging) onMove(e.clientX);
-            };
-            
-            const onTouchMove = (e) => {
-                if (isDragging) onMove(e.touches[0].clientX);
-            };
-            
-            const stopDrag = () => {
-                isDragging = false;
-                thumb.classList.remove('active');
-            };
-            
-            // Initialize
-            sliderRect = sliderEl.getBoundingClientRect();
-            updateThumbAndProgress(valueToPercent(value));
+    elements.roundsInput?.addEventListener('input', () => {
+        if (elements.roundsValue) {
+            elements.roundsValue.textContent = elements.roundsInput.value;
+            elements.roundsValue.classList.remove('changed');
+            void elements.roundsValue.offsetWidth;
+            elements.roundsValue.classList.add('changed');
+        }
+    });
 
-            if (sliderEl.dataset.initialized === 'true') return;
+    elements.holdTimeInput?.addEventListener('input', () => {
+        if (elements.holdTimeValue) {
+            elements.holdTimeValue.textContent = elements.holdTimeInput.value;
+            elements.holdTimeValue.classList.remove('changed');
+            void elements.holdTimeValue.offsetWidth;
+            elements.holdTimeValue.classList.add('changed');
+        }
+    });
 
-            // Events
-            thumb.addEventListener('mousedown', onMouseDown);
-            thumb.addEventListener('touchstart', onTouchStart, { passive: true });
-            
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', stopDrag);
-            document.addEventListener('touchmove', onTouchMove, { passive: false });
-            document.addEventListener('touchend', stopDrag);
-            
-            sliderEl.addEventListener('mousedown', (e) => {
-                if (e.target === sliderEl || e.target === fill || e.target.classList.contains('slider-track')) {
-                    isDragging = true;
-                    sliderRect = sliderEl.getBoundingClientRect();
-                    onMove(e.clientX);
-                    thumb.classList.add('active');
-                }
-            });
-            
-            sliderEl.addEventListener('touchstart', (e) => {
-                if (e.target === sliderEl || e.target === fill || e.target.classList.contains('slider-track')) {
-                    isDragging = true;
-                    sliderRect = sliderEl.getBoundingClientRect();
-                    onMove(e.touches[0].clientX);
-                    thumb.classList.add('active');
-                }
-            }, { passive: true });
+    elements.breathDurationInput?.addEventListener('input', () => {
+        if (elements.breathDurationValue) {
+            elements.breathDurationValue.textContent = elements.breathDurationInput.value;
+            elements.breathDurationValue.classList.remove('changed');
+            void elements.breathDurationValue.offsetWidth;
+            elements.breathDurationValue.classList.add('changed');
+        }
+    });
 
-            sliderEl.dataset.initialized = 'true';
-        });
-    }
-    
     async function preloadSounds() {
         if (state.soundsLoaded) return;
         
@@ -665,6 +550,33 @@ document.addEventListener('DOMContentLoaded', function() {
             if (screenId === 'completion') {
                 updateCompletionTexts();
             }
+        }
+    }
+
+    function showSettings() {
+        if (elements.roundsInput && elements.holdTimeInput && elements.breathDurationInput) {
+            elements.roundsInput.value = state.rounds;
+            elements.holdTimeInput.value = state.initialHoldTime;
+            elements.breathDurationInput.value = state.breathDuration;
+            if (elements.roundsValue) elements.roundsValue.textContent = state.rounds;
+            if (elements.holdTimeValue) elements.holdTimeValue.textContent = state.initialHoldTime;
+            if (elements.breathDurationValue) elements.breathDurationValue.textContent = state.breathDuration;
+        }
+        elements.settingsModal?.classList.add('active');
+        elements.modalOverlay?.classList.add('active');
+    }
+
+    function hideSettings() {
+        elements.settingsModal?.classList.remove('active');
+        elements.modalOverlay?.classList.remove('active');
+    }
+
+    function saveSettings() {
+        if (elements.roundsInput && elements.holdTimeInput && elements.breathDurationInput) {
+            state.rounds = parseInt(elements.roundsInput.value) || 3;
+            state.initialHoldTime = parseInt(elements.holdTimeInput.value) || 90;
+            state.breathDuration = parseFloat(elements.breathDurationInput.value) || 1.5;
+            hideSettings();
         }
     }
 
