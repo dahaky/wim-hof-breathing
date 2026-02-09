@@ -1,5 +1,41 @@
 const tg = window.Telegram?.WebApp;
 
+// Детект производительности устройства
+const devicePerformance = (() => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const cores = navigator.hardwareConcurrency || 2;
+    const memory = navigator.deviceMemory || 2;
+    
+    // Определяем уровень производительности
+    let level = 'high';
+    
+    if (isMobile) {
+        if (cores < 4 || memory < 3) {
+            level = 'low';
+        } else if (cores < 6 || memory < 4) {
+            level = 'medium';
+        }
+    }
+    
+    // Для старых Android устройств
+    if (isAndroid && cores < 4) {
+        level = 'low';
+    }
+    
+    return {
+        level,
+        isMobile,
+        isLowPerformance: level === 'low',
+        particleCount: level === 'low' ? 0 : level === 'medium' ? 6 : 12
+    };
+})();
+
+// Применяем класс для низкой производительности
+if (devicePerformance.isLowPerformance) {
+    document.body.classList.add('low-performance');
+}
+
 if (tg) {
     tg.expand();
     tg.ready();
@@ -203,14 +239,40 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.progressRing.style.strokeDashoffset = offset;
     }
 
-    function createParticles(type, duration = 1500) {
-        if (!elements.breathParticles) return;
-        elements.breathParticles.innerHTML = '';
+    // Пул частиц для переиспользования
+    const particlePool = [];
+    const MAX_PARTICLES = 12;
+    
+    function initParticlePool() {
+        if (!elements.breathParticles || devicePerformance.isLowPerformance) return;
         
-        const particleCount = 12;
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < MAX_PARTICLES; i++) {
             const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = '50%';
+            particle.style.top = '50%';
+            particle.style.display = 'none';
+            elements.breathParticles.appendChild(particle);
+            particlePool.push(particle);
+        }
+    }
+    
+    function createParticles(type, duration = 1500) {
+        if (!elements.breathParticles || devicePerformance.isLowPerformance) return;
+        
+        const particleCount = devicePerformance.particleCount;
+        
+        // Скрываем все частицы
+        particlePool.forEach(p => {
+            p.style.display = 'none';
+            p.className = 'particle';
+        });
+        
+        // Используем нужное количество из пула
+        for (let i = 0; i < particleCount; i++) {
+            const particle = particlePool[i];
             particle.className = `particle ${type}`;
+            particle.style.display = 'block';
             particle.style.setProperty('--breath-time', `${duration}ms`);
             
             const angle = (i / particleCount) * Math.PI * 2;
@@ -218,24 +280,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const x = Math.cos(angle) * distance;
             const y = Math.sin(angle) * distance;
             
-            particle.style.left = '50%';
-            particle.style.top = '50%';
             particle.style.setProperty('--start-x', `${x}px`);
             particle.style.setProperty('--start-y', `${y}px`);
             particle.style.setProperty('--end-x', `${x}px`);
             particle.style.setProperty('--end-y', `${y}px`);
             particle.style.animationDelay = `${Math.random() * 0.3}s`;
-            
-            elements.breathParticles.appendChild(particle);
         }
     }
 
     function triggerWaterWave(duration) {
-        if (!elements.waterWave) return;
+        if (!elements.waterWave || devicePerformance.isLowPerformance) return;
         elements.waterWave.classList.remove('wave-active');
-        void elements.waterWave.offsetWidth;
-        elements.waterWave.style.setProperty('--wave-duration', `${duration}ms`);
-        elements.waterWave.classList.add('wave-active');
+        requestAnimationFrame(() => {
+            elements.waterWave.style.setProperty('--wave-duration', `${duration}ms`);
+            elements.waterWave.classList.add('wave-active');
+        });
     }
     
     function stopWaterWave() {
@@ -246,26 +305,31 @@ document.addEventListener('DOMContentLoaded', function() {
     function animateCounter() {
         if (!elements.counter) return;
         elements.counter.classList.remove('tick');
-        void elements.counter.offsetWidth;
-        elements.counter.classList.add('tick');
+        requestAnimationFrame(() => {
+            elements.counter.classList.add('tick');
+        });
     }
 
     function animatePhaseChange() {
         if (!elements.phase) return;
         elements.phase.classList.remove('changing');
-        void elements.phase.offsetWidth;
-        elements.phase.classList.add('changing');
+        requestAnimationFrame(() => {
+            elements.phase.classList.add('changing');
+        });
     }
 
     function setBreathingAnimation(type, duration = 1500) {
         if (!elements.breathingCircle) return;
         if (type) {
-            elements.breathingCircle.style.setProperty('--breath-time', `${duration}ms`);
-            elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
-            void elements.breathingCircle.offsetWidth;
-            elements.breathingCircle.classList.add(type);
-            createParticles(type, duration);
-            triggerWaterWave(duration);
+            requestAnimationFrame(() => {
+                elements.breathingCircle.style.setProperty('--breath-time', `${duration}ms`);
+                elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
+                requestAnimationFrame(() => {
+                    elements.breathingCircle.classList.add(type);
+                    createParticles(type, duration);
+                    triggerWaterWave(duration);
+                });
+            });
         } else {
             elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
             stopWaterWave();
@@ -390,6 +454,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (elements.themeToggle) elements.themeToggle.checked = isDark;
 
     updateLanguage();
+    
+    // Инициализируем пул частиц
+    initParticlePool();
 
     elements.startButton?.addEventListener('click', startExercise);
     elements.settingsButton?.addEventListener('click', showSettings);
@@ -430,8 +497,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elements.roundsValue) {
             elements.roundsValue.textContent = elements.roundsInput.value;
             elements.roundsValue.classList.remove('changed');
-            void elements.roundsValue.offsetWidth;
-            elements.roundsValue.classList.add('changed');
+            requestAnimationFrame(() => {
+                elements.roundsValue.classList.add('changed');
+            });
         }
     });
 
@@ -439,8 +507,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elements.holdTimeValue) {
             elements.holdTimeValue.textContent = elements.holdTimeInput.value;
             elements.holdTimeValue.classList.remove('changed');
-            void elements.holdTimeValue.offsetWidth;
-            elements.holdTimeValue.classList.add('changed');
+            requestAnimationFrame(() => {
+                elements.holdTimeValue.classList.add('changed');
+            });
         }
     });
 
@@ -448,8 +517,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elements.breathDurationValue) {
             elements.breathDurationValue.textContent = elements.breathDurationInput.value;
             elements.breathDurationValue.classList.remove('changed');
-            void elements.breathDurationValue.offsetWidth;
-            elements.breathDurationValue.classList.add('changed');
+            requestAnimationFrame(() => {
+                elements.breathDurationValue.classList.add('changed');
+            });
         }
     });
 
