@@ -98,8 +98,8 @@ body {
 .ambient-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(40px);
-    opacity: 0.3;
+    filter: blur(80px);
+    opacity: 0.4;
     animation: float 25s ease-in-out infinite, orb-pulse 8s ease-in-out infinite;
     will-change: transform;
     contain: layout style paint;
@@ -135,8 +135,8 @@ body {
 }
 
 @keyframes orb-pulse {
-    0%, 100% { opacity: 0.3; filter: blur(40px); }
-    50% { opacity: 0.5; filter: blur(50px); }
+    0%, 100% { opacity: 0.4; filter: blur(80px); }
+    50% { opacity: 0.6; filter: blur(100px); }
 }
 
 .ambient-particles {
@@ -156,10 +156,15 @@ body {
 }
 
 .ambient-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-.ambient-particle:nth-child(2) { left: 30%; animation-delay: -3s; }
-.ambient-particle:nth-child(3) { left: 50%; animation-delay: -6s; }
-.ambient-particle:nth-child(4) { left: 70%; animation-delay: -9s; }
-.ambient-particle:nth-child(5) { left: 90%; animation-delay: -12s; }
+.ambient-particle:nth-child(2) { left: 20%; animation-delay: -2s; }
+.ambient-particle:nth-child(3) { left: 30%; animation-delay: -4s; }
+.ambient-particle:nth-child(4) { left: 40%; animation-delay: -6s; }
+.ambient-particle:nth-child(5) { left: 50%; animation-delay: -8s; }
+.ambient-particle:nth-child(6) { left: 60%; animation-delay: -10s; }
+.ambient-particle:nth-child(7) { left: 70%; animation-delay: -12s; }
+.ambient-particle:nth-child(8) { left: 80%; animation-delay: -14s; }
+.ambient-particle:nth-child(9) { left: 90%; animation-delay: -1s; }
+.ambient-particle:nth-child(10) { left: 15%; animation-delay: -3s; }
 
 @keyframes particle-float {
     0% {
@@ -237,9 +242,9 @@ body {
     inset: -40px;
     border-radius: 50%;
     background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-    opacity: 0.5;
+    opacity: 0.6;
     transition: opacity var(--breath-time, 0.8s), transform var(--breath-time, 0.8s);
-    filter: blur(15px);
+    filter: blur(20px);
     will-change: opacity, transform;
 }
 
@@ -257,40 +262,40 @@ body {
 
 @keyframes glow-pulse {
     0%, 100% {
-        opacity: 0.5;
+        opacity: 0.6;
         transform: scale(1);
-        filter: blur(15px);
+        filter: blur(20px);
     }
     50% {
-        opacity: 0.8;
+        opacity: 1;
         transform: scale(1.15);
-        filter: blur(18px);
+        filter: blur(25px);
     }
 }
 
 @keyframes glow-inhale {
     0% {
-        opacity: 0.5;
+        opacity: 0.6;
         transform: scale(1);
-        filter: blur(15px);
+        filter: blur(20px);
     }
     100% {
-        opacity: 0.9;
+        opacity: 1;
         transform: scale(1.3);
-        filter: blur(20px);
+        filter: blur(30px);
     }
 }
 
 @keyframes glow-exhale {
     0% {
-        opacity: 0.9;
+        opacity: 1;
         transform: scale(1.3);
-        filter: blur(20px);
+        filter: blur(30px);
     }
     100% {
-        opacity: 0.5;
+        opacity: 0.6;
         transform: scale(1);
-        filter: blur(15px);
+        filter: blur(20px);
     }
 }
 
@@ -1354,48 +1359,6 @@ body.dark .setting-item:hover {
     to { transform: rotate(360deg); }
 }
 
-/* Оптимизация для слабых устройств */
-body.low-performance .ambient-orb {
-    display: none;
-}
-
-body.low-performance .ambient-particles {
-    display: none;
-}
-
-body.low-performance .particle {
-    display: none;
-}
-
-body.low-performance .water-wave {
-    display: none;
-}
-
-body.low-performance .circle-glow {
-    filter: blur(10px);
-}
-
-body.low-performance .circle-glow::before {
-    display: none;
-}
-
-body.low-performance .progress-ring__circle {
-    filter: drop-shadow(0 0 4px var(--accent-glow));
-}
-
-body.low-performance .btn-primary {
-    animation: none;
-}
-
-body.low-performance .logo-ring {
-    animation: pulse-ring 3s ease-in-out infinite;
-}
-
-body.low-performance .ambient-bg {
-    animation: none;
-    opacity: 0.4;
-}
-
 /* Отключение анимаций при prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -1424,17 +1387,3 @@ body.low-performance .ambient-bg {
     :root { --circle-size: 220px; }
 }
 
-/* Дополнительная оптимизация для мобильных устройств */
-@media (max-width: 768px) {
-    .ambient-orb {
-        filter: blur(30px);
-    }
-    
-    .circle-glow {
-        filter: blur(12px);
-    }
-    
-    .control-btn:hover {
-        transform: scale(1);
-    }
-}

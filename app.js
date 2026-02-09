@@ -1,40 +1,18 @@
 const tg = window.Telegram?.WebApp;
 
-// Детект производительности устройства
+// Техническая оптимизация - детект устройства для логирования
 const devicePerformance = (() => {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
     const cores = navigator.hardwareConcurrency || 2;
     const memory = navigator.deviceMemory || 2;
     
-    // Определяем уровень производительности
-    let level = 'high';
-    
-    if (isMobile) {
-        if (cores < 4 || memory < 3) {
-            level = 'low';
-        } else if (cores < 6 || memory < 4) {
-            level = 'medium';
-        }
-    }
-    
-    // Для старых Android устройств
-    if (isAndroid && cores < 4) {
-        level = 'low';
-    }
-    
     return {
-        level,
         isMobile,
-        isLowPerformance: level === 'low',
-        particleCount: level === 'low' ? 0 : level === 'medium' ? 6 : 12
+        cores,
+        memory,
+        particleCount: 12 // Всегда 12 частиц для красоты
     };
 })();
-
-// Применяем класс для низкой производительности
-if (devicePerformance.isLowPerformance) {
-    document.body.classList.add('low-performance');
-}
 
 if (tg) {
     tg.expand();
@@ -244,8 +222,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const MAX_PARTICLES = 12;
     
     function initParticlePool() {
-        if (!elements.breathParticles || devicePerformance.isLowPerformance) return;
+        if (!elements.breathParticles) return;
         
+        // Создаем пул из 12 частиц для переиспользования (техническая оптимизация)
         for (let i = 0; i < MAX_PARTICLES; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -258,9 +237,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function createParticles(type, duration = 1500) {
-        if (!elements.breathParticles || devicePerformance.isLowPerformance) return;
+        if (!elements.breathParticles) return;
         
-        const particleCount = devicePerformance.particleCount;
+        const particleCount = 12; // Всегда 12 для красоты
         
         // Скрываем все частицы
         particlePool.forEach(p => {
@@ -268,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
             p.className = 'particle';
         });
         
-        // Используем нужное количество из пула
+        // Используем частицы из пула (техническая оптимизация - переиспользование DOM)
         for (let i = 0; i < particleCount; i++) {
             const particle = particlePool[i];
             particle.className = `particle ${type}`;
@@ -289,8 +268,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function triggerWaterWave(duration) {
-        if (!elements.waterWave || devicePerformance.isLowPerformance) return;
+        if (!elements.waterWave) return;
         elements.waterWave.classList.remove('wave-active');
+        // Техническая оптимизация - используем RAF вместо принудительного reflow
         requestAnimationFrame(() => {
             elements.waterWave.style.setProperty('--wave-duration', `${duration}ms`);
             elements.waterWave.classList.add('wave-active');
@@ -305,6 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function animateCounter() {
         if (!elements.counter) return;
         elements.counter.classList.remove('tick');
+        // Техническая оптимизация - RAF вместо void offsetWidth
         requestAnimationFrame(() => {
             elements.counter.classList.add('tick');
         });
@@ -313,6 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function animatePhaseChange() {
         if (!elements.phase) return;
         elements.phase.classList.remove('changing');
+        // Техническая оптимизация - RAF вместо void offsetWidth
         requestAnimationFrame(() => {
             elements.phase.classList.add('changing');
         });
@@ -321,6 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function setBreathingAnimation(type, duration = 1500) {
         if (!elements.breathingCircle) return;
         if (type) {
+            // Техническая оптимизация - батчинг DOM операций через RAF
             requestAnimationFrame(() => {
                 elements.breathingCircle.style.setProperty('--breath-time', `${duration}ms`);
                 elements.breathingCircle.classList.remove('inhale', 'exhale', 'hold-pulse');
@@ -497,6 +480,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elements.roundsValue) {
             elements.roundsValue.textContent = elements.roundsInput.value;
             elements.roundsValue.classList.remove('changed');
+            // Техническая оптимизация - RAF вместо void offsetWidth
             requestAnimationFrame(() => {
                 elements.roundsValue.classList.add('changed');
             });
@@ -507,6 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elements.holdTimeValue) {
             elements.holdTimeValue.textContent = elements.holdTimeInput.value;
             elements.holdTimeValue.classList.remove('changed');
+            // Техническая оптимизация - RAF вместо void offsetWidth
             requestAnimationFrame(() => {
                 elements.holdTimeValue.classList.add('changed');
             });
@@ -517,6 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (elements.breathDurationValue) {
             elements.breathDurationValue.textContent = elements.breathDurationInput.value;
             elements.breathDurationValue.classList.remove('changed');
+            // Техническая оптимизация - RAF вместо void offsetWidth
             requestAnimationFrame(() => {
                 elements.breathDurationValue.classList.add('changed');
             });
