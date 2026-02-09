@@ -50,7 +50,9 @@ html, body {
     height: 100dvh;
     overflow: hidden;
     overscroll-behavior: none;
-    touch-action: none;
+    touch-action: pan-y;
+    position: fixed;
+    width: 100%;
 }
 
 body {
@@ -58,7 +60,6 @@ body {
     background: var(--tg-theme-bg-color);
     color: var(--tg-theme-text-color);
     line-height: 1.5;
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -73,8 +74,12 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: max(20px, var(--safe-area-top)) 20px max(20px, var(--safe-area-bottom));
-    position: relative;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     overflow: hidden;
 }
 
@@ -170,11 +175,17 @@ body {
     width: 100%;
     max-width: 400px;
     height: 100%;
-    position: relative;
+    height: 100dvh;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px) scale(0.98);
     z-index: 1;
-    transform: translateY(20px) scale(0.98);
     transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: max(20px, var(--safe-area-top)) 20px max(20px, var(--safe-area-bottom));
 }
 
 .screen.active {
@@ -183,38 +194,38 @@ body {
     align-items: center;
     justify-content: center;
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
 }
 
 #homeScreen.active {
     justify-content: center;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 #exerciseScreen.active {
-    justify-content: space-between;
-    padding-top: clamp(40px, 10vh, 80px);
-    padding-bottom: clamp(20px, 5vh, 40px);
+    justify-content: flex-start;
+    padding-top: max(40px, var(--safe-area-top));
+    padding-bottom: max(20px, var(--safe-area-bottom));
+    overflow-y: hidden;
 }
 
 .breathing-circle {
     width: var(--circle-size);
     height: var(--circle-size);
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+    margin: auto 0;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
     perspective: 1000px;
     transform-style: preserve-3d;
+    flex-shrink: 0;
 }
 
 .breathing-circle.hidden {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8) rotateX(90deg);
+    transform: scale(0.8) rotateX(90deg);
 }
 
 .circle-glow {
@@ -299,13 +310,12 @@ body {
     align-items: center;
     text-align: center;
     gap: 16px;
-    height: 100%;
     width: 100%;
     max-width: 360px;
     margin: 0 auto;
     animation: fadeInUp 0.8s var(--ease-out-expo);
     justify-content: center;
-    padding: 0;
+    padding: 20px 0;
 }
 
 .home-content > * {
@@ -800,15 +810,15 @@ body.dark .control-btn {
 }
 
 .exercise-buttons {
-    margin-top: auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
     z-index: 100;
     width: 100%;
     max-width: 280px;
-    padding-bottom: max(20px, var(--safe-area-bottom));
     align-items: center;
+    margin-top: 20px;
+    flex-shrink: 0;
 }
 
 .btn-small {
@@ -837,10 +847,6 @@ body.dark .control-btn {
 }
 
 .breathing-tip {
-    position: absolute;
-    top: calc(45% + var(--circle-size) / 2 + 40px);
-    left: 50%;
-    transform: translateX(-50%);
     width: 90%;
     max-width: 320px;
     text-align: center;
@@ -852,6 +858,8 @@ body.dark .control-btn {
     transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
     z-index: 5;
     padding: 0 16px;
+    margin-top: 20px;
+    flex-shrink: 0;
 }
 
 .breathing-tip.active {
@@ -863,11 +871,11 @@ body.dark .control-btn {
 @keyframes tip-fade-in {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -878,23 +886,19 @@ body.dark .control-btn {
 @keyframes tip-change {
     0% {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
     50% {
         opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
+        transform: translateY(-10px);
     }
     100% {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
 .next-round-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     font-size: clamp(20px, 5vw, 28px);
     font-weight: 600;
     background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
@@ -905,11 +909,21 @@ body.dark .control-btn {
     z-index: 10;
     text-align: center;
     animation: pulse-text 1.5s ease-in-out infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 @keyframes pulse-text {
-    0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+    0%, 100% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
 }
 
 .completion-content {
@@ -918,6 +932,10 @@ body.dark .control-btn {
     align-items: center;
     text-align: center;
     gap: 24px;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    padding: 20px 0;
 }
 
 .success-icon {
@@ -964,12 +982,11 @@ body.dark .control-btn {
 #settingsScreen {
     display: flex;
     flex-direction: column;
-    padding: max(20px, var(--safe-area-top)) 20px max(20px, var(--safe-area-bottom));
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 #settingsScreen.active {
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .settings-header {
@@ -978,8 +995,7 @@ body.dark .control-btn {
     justify-content: space-between;
     width: 100%;
     max-width: 360px;
-    margin: 0 auto;
-    padding: 0 0 20px;
+    margin: 0 auto 20px;
     flex-shrink: 0;
 }
 
@@ -1019,13 +1035,12 @@ body.dark .icon-btn:hover {
 }
 
 .settings-content-screen {
-    flex: 1;
     width: 100%;
     max-width: 360px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 24px;
     margin: 0 auto;
     overflow: visible;
@@ -1710,12 +1725,20 @@ body.dark .setting-item:hover {
 }
 
 @media (max-height: 600px) {
-    :root { --circle-size: 220px; }
-    .exercise-buttons { gap: 8px; }
+    :root { --circle-size: 200px; }
+    .exercise-buttons { gap: 8px; margin-top: 10px; }
     .btn { padding: 12px 24px; }
-    #exerciseScreen.active { padding-top: 40px; }
+    #exerciseScreen.active { padding-top: 30px; padding-bottom: 30px; }
+    .breathing-tip { margin-top: 10px; }
 }
 
 @media (max-width: 350px) {
-    :root { --circle-size: 220px; }
+    :root { --circle-size: 200px; }
+}
+
+#exerciseScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
